@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>{% block title %} {{title}} {% endblock %} | blog</title>
+	<style>
+		*{margin:0;padding:0;}
+		html,body{height:100%;}
+		.container,.footer{width:960px; margin:0 auto; overflow: hidden;}
+		.container{min-height: 100%;margin-bottom:-45px;}
+		.notification,.header,.ads,.wrap,.side{border:1px solid #ddd; margin:5px; padding:5px; box-sizing:border-box;}
+		.header,.ads{height:80px;}
+		.content{overflow: hidden; margin-bottom:45px;}
+		.wrap{float:left; width:700px;}
+		.side{float:right; width:240px;}
+		.footer{clear:both; border:1px solid #ddd; height:40px;line-height:40px; margin:0 auto;}
+	</style>
+</head>
+<body>
+# set abc='abc'
+	<div class="container">
+		<div class="notification">
+			# for message in get_flashed_messages()
+				{{message}}<br/>
+			# endfor
+			<span>{{abc}}</span>
+		</div>
+		<div class="header">header</div>
+		<div class="ads">ads</div>
+		<div class="content">
+			<div class="wrap">
+		      # block content
+		      # endblock
+			</div>
+			<div class="side">
+				<!-- <div class="widget">widgets</div> -->
+				# block widgets
+					widgets<br/>
+					widgets<br/>
+					widgets<br/>
+					widgets<br/>
+				# endblock
+			</div>
+		</div>
+	</div>
+	<div class="footer">footer</div>
+</body>
+</html>

@@ -21,6 +21,8 @@ import auth
 import task
 import user
 
+import helpers
+
 
 if config.DEVELOPMENT:
   from werkzeug import debug

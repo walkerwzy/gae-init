@@ -1,0 +1,12 @@
+	hello {{name}}
+	<form>
+		{{ form.hidden_tag() }}
+		## {{ form.csrf_token }}
+		{{ form.fdtxt.label }}
+		{{ form.fdtxt(size=20,class='abc') }}<br/>
+		{{ form.fdddl.label }}
+		{{ form.fdddl() }}
+		{{ form.fdpost.label }}
+		{{ form.fdpost() }}
+		<button>submit</button>
+	</form>

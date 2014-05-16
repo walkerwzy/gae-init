@@ -1,0 +1,18 @@
+# extends 'base.html'
+# import 'macro/forms.html' as forms
+## import 'macro/utils.html' as utils
+
+# block content
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li class="active">Admin</li>
+</ol>
+<ul>
+	<li><a href="{{url_for('admin_config_update')}}">Site Base</li>
+	<li><a href="{{url_for('category')}}">Categories</a></li>
+	<li><a href="{{url_for('ads')}}">Advertisements</a></li>
+	<li><a href="{{url_for('links')}}">Links</a></li>
+	<li><a href="{{url_for('posts')}}">Posts</a></li>
+	<li>...</li>
+</ul>
+# endblock

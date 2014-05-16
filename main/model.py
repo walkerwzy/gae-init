@@ -35,6 +35,11 @@ class Config(Base, modelx.ConfigX):
   notify_on_new_user = ndb.BooleanProperty(default=True)
   twitter_consumer_key = ndb.StringProperty(default='')
   twitter_consumer_secret = ndb.StringProperty(default='')
+  description = ndb.StringProperty(default='')
+  sub_name = ndb.StringProperty(default='')
+  keywords = ndb.StringProperty(default='')
+  head_metas = ndb.StringProperty(default='')
+  google_cse_cs = ndb.StringProperty(default='')
 
   _PROPERTIES = Base._PROPERTIES.union({
       'analytics_id',
@@ -48,6 +53,11 @@ class Config(Base, modelx.ConfigX):
       'notify_on_new_user',
       'twitter_consumer_key',
       'twitter_consumer_secret',
+      'description',
+      'sub_name',
+      'keywords',
+      'head_metas',
+      'google_cse_cs'
     })
 
 

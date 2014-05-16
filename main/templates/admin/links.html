@@ -1,0 +1,59 @@
+# extends 'base.html'
+# import 'macro/forms.html' as forms
+## import 'macro/utils.html' as utils
+
+# block content
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{url_for('site')}}">Admin</a></li>
+  <li class="active">Ads</li>
+</ol>
+<div class="col-md-8">
+	<h3>Link List</h3>
+	<hr />
+	<table class="table table-condensed table-bordered">
+		<tr>
+			<th>name</th>
+			<th>url</th>
+			<th>sort</th>
+			<th width=110>&nbsp;</th>
+		</tr>
+		# for item in data
+		<tr>
+			<td>{{item.name}}</td>
+			<td>{{item.url}}</td>
+			<td>{{item.sort}}</td>
+			<td>
+				<a href="{{url_for('links',id=item.key.id())}}" class="btn btn-link btn-xs">edit</a>
+				<a href="{{url_for('links',act='delete',id=item.key.id())}}" class="btn btn-link btn-xs" onclick="return confirm('confirm delete?');">delete</a>
+			</td>
+		</tr>
+		# endfor
+	</table>
+</div>
+<div class="col-md-4">
+	<h3>Editor</h3>
+	<hr/>
+	<form method="POST">
+		{{ form.hidden_tag() }}
+		{{ forms.text_field(form.name,required='required') }}
+		{{ forms.textarea_field(form.url) }}
+		{{ forms.number_field(form.sort) }}
+
+		<div class="row">
+			<div class="col-md-6">
+				<button class="btn btn-primary btn-lg btn-block">
+					{{btn}}
+				</button>
+			</div>
+			<div class="col-md-6">
+			# if btn=='Create'
+				<input type="reset" value="reset" class="btn btn-warning btn-lg btn-block" />
+			# else
+				<a href="{{url_for('links')}}" class="btn btn-warning btn-lg btn-block">Cancel</a>
+			# endif
+			</div>
+		</div>
+	</form>
+</div>
+# endblock

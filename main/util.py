@@ -224,3 +224,46 @@ def update_query_argument(name, value=None, ignore='cursor', is_list=False):
 strip_filter = lambda x: x.strip() if x else ''
 email_filter = lambda x: x.lower().strip() if x else ''
 sort_filter = lambda x: sorted(x) if x else []
+
+###############################################################################
+# walker_helpers
+###############################################################################
+
+def remove_html_markup(s):
+  """http://stackoverflow.com/questions/753052/strip-html-from-strings-in-python"""
+  tag = False
+  quote = False
+  out = ""
+  for c in s:
+          if c == '<' and not quote:
+              tag = True
+          elif c == '>' and not quote:
+              tag = False
+          elif (c == '"' or c == "'") and tag:
+              quote = not quote
+          elif not tag:
+              out = out + c
+  return out
+
+def settag(tagsstr):
+    if tagsstr:
+        tagsstr = remove_html_markup(tagsstr)
+        if tagsstr:
+            tagsstr = tagsstr.lower()
+            tagsstr = tagsstr.replace(u"，",",")
+            tagsstr = tagsstr.replace("/",",")
+            tagsstr = tagsstr.replace("%",",")
+            tagslist = map((lambda x: x.strip()),tagsstr.split(','))
+            tagslist = list(set(tagslist))
+            try:tagslist.remove('')
+            except:pass
+            return tagslist
+        else:
+            return []
+    else:
+        return []
+
+def gettagstr(tags):
+  if isinstance(tags,list):
+    return ','.join(tags)
+  return ''

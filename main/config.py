@@ -49,7 +49,14 @@ SCRIPTS = [
         'ext/js/bootstrap/collapse.js',
         'ext/js/bootstrap/dropdown.js',
         'ext/js/bootstrap/tooltip.js',
-      ]),
+      ],True),# true means will included in every page
+    ('bootstrap',[
+        'ext/js/bootstrap/tab.js',
+        'ext/js/bootstrap/modal.js',
+        ],False),
+    ('marked',[
+        'ext/js/marked/marked.js',
+      ],False),
     ('scripts', [
         'src/script/common/service.coffee',
         'src/script/common/util.coffee',
@@ -58,5 +65,7 @@ SCRIPTS = [
         'src/script/site/profile.coffee',
         'src/script/site/signin.coffee',
         'src/script/site/user.coffee',
-      ]),
+      ],True),
+    ('cms',[
+      ],False)
   ]

@@ -2,8 +2,14 @@
 # import 'macro/forms.html' as forms
 
 # block content
-  <div class="page-header">
-    <h1>{{title}}</h1>
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><a href="{{url_for('site')}}">Admin</a></li>
+  <li class="active">Configuration</li>
+</ol>
+  <!-- <div class="page-header"> -->
+  <div>
+    <!-- <h3>{{title}}</h3> -->
     <p class="help-block">
       For most of the settings you will
       # if instances_url
@@ -15,30 +21,40 @@
     </p>
   </div>
 
-
-  <form method="POST" action="." novalidate>
-    <div class="row">
-      <fieldset class="col-sm-6 col-md-5">
-        <legend>General</legend>
-        {{form.csrf_token}}
-
-        {{forms.text_field(form.brand_name, autofocus=True)}}
-        {{forms.email_field(form.feedback_email)}}
-        {{forms.checkbox_field(form.notify_on_new_user)}}
-        {{forms.textarea_field(form.announcement_html)}}
-        {{forms.select_field(form.announcement_type)}}
-      </fieldset>
-
-      <fieldset class="col-sm-6 col-md-7">
-        <legend>Keys</legend>
-        <div class="panel-group" id="oauth">
-          # include "admin/bit/flask_secret_key.html"
-          # include "admin/bit/facebook_oauth.html"
-          # include "admin/bit/google_analytics_tracking_id.html"
-          # include "admin/bit/twitter_oauth.html"
-        </div>
-      </fieldset>
+<form method="POST" action="." novalidate>
+  {{form.csrf_token}}
+<ul class="nav nav-tabs" id="myTab">
+  <li class="active"><a href="#base" data-toggle="tab">Base</a></li>
+  <li><a href="#keys" data-toggle="tab">Auth &amp; Keys</a></li>
+  <li><a href="#ext" data-toggle="tab">Exts</a></li>
+</ul>
+<div class="tab-content" style="min-height:350px;">
+  <div class="tab-pane active" id="base">
+    <br />
+    {{forms.text_field(form.brand_name, autofocus=True)}}
+    {{forms.email_field(form.feedback_email)}}
+    {{forms.checkbox_field(form.notify_on_new_user)}}
+    {{forms.textarea_field(form.announcement_html)}}
+    {{forms.select_field(form.announcement_type)}}
+  </div>
+  <div class="tab-pane" id="keys">
+    <br />
+    <div class="panel-group" id="oauth">
+      # include "admin/bit/flask_secret_key.html"
+      # include "admin/bit/facebook_oauth.html"
+      # include "admin/bit/google_analytics_tracking_id.html"
+      # include "admin/bit/twitter_oauth.html"
     </div>
+  </div>
+  <div class="tab-pane" id="ext">
+    <br />
+    {{forms.text_field(form.sub_name)}}
+    {{forms.textarea_field(form.description)}}
+    {{forms.text_field(form.keywords)}}
+    {{forms.textarea_field(form.head_metas)}}
+    {{forms.text_field(form.google_cse_cs)}}
+  </div>
+</div>
     <hr>
     <div class="row">
       <div class="col-md-6 col-md-offset-3">
@@ -48,4 +64,8 @@
       </div>
     </div>
   </form>
+# endblock
+
+# block scripts
+  {{ renderScript('bootstrap') }}
 # endblock

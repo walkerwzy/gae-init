@@ -230,7 +230,7 @@ def is_style_modified(target):
 def compile_all_dst():
   for source in config.STYLES:
     compile_style(os.path.join(DIR_STATIC, source), DIR_DST_STYLE, True)
-  for _, scripts in config.SCRIPTS:
+  for _, scripts, e in config.SCRIPTS:
     for source in scripts:
       compile_script(os.path.join(DIR_STATIC, source), DIR_DST_SCRIPT)
 
@@ -242,7 +242,7 @@ def update_path_separators():
   for idx in xrange(len(config.STYLES)):
     config.STYLES[idx] = fixit(config.STYLES[idx])
 
-  for _, scripts in config.SCRIPTS:
+  for _, scripts, everywhere in config.SCRIPTS:
     for idx in xrange(len(scripts)):
       scripts[idx] = fixit(scripts[idx])
 
@@ -308,7 +308,7 @@ def install_py_libs():
   if not check_pip_should_run():
     return
 
-  exec_pip_commands('pip install -q -r %s' % FILE_LIB_REQUIREMENTS)
+  exec_pip_commands('pip install -r %s' % FILE_LIB_REQUIREMENTS)
 
   exclude_ext = ['.pth', '.pyc', '.egg-info', '.dist-info']
   exclude_prefix = ['setuptools-', 'pip-', 'Pillow-']
@@ -600,7 +600,7 @@ def run():
 
   if doctor_says_ok():
     install_dependencies()
-    check_for_update()
+    # check_for_update()
 
   print_out_update()
 
@@ -622,3 +622,4 @@ def run():
 
 if __name__ == '__main__':
   run()
+  

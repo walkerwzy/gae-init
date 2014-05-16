@@ -5,10 +5,15 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    # block seo
+    <meta name="keywords" content="{{config.CONFIG_DB.keywords}}" />
+    <meta name="description" content="{{config.CONFIG_DB.description}}" />
+    # endblock seo
+    {{config.CONFIG_DB.head_metas|safe if config.CONFIG_DB.head_metas}}
     <title>
-      # block title
-        {{title + ' |' if title}}
-      # endblock
+      #- block title
+        {{title + ' | ' if title}}
+      #- endblock
       {{config.CONFIG_DB.brand_name}}
     </title>
     # include 'bit/style.html'

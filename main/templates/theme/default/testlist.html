@@ -1,0 +1,38 @@
+# extends 'theme/default/layout.html'
+
+# block content
+
+# macro field_errors(field)
+	<ul>
+  # for error in field.errors
+    <li>{{error}}</li>
+  # endfor
+  	</ul>
+# endmacro
+
+#macro field(field)
+	{{field.label}}: {{field(**kwargs)}} {{field_errors(field)}}
+#endmacro
+
+{{abc}}
+<form method="POST">
+	{{form.hidden_tag()}}
+	{{field(form.f1)}}
+	{{field(form.f2)}}
+	{{field(form.f3)}}
+	<button>submit</button>
+</form>
+
+	# for l in ls
+		{{l}},{{l.ids}},{{l.fromkey}},{{l.keystr}}<br/>
+		tokey: {{l.strtokey}}<br/>
+	# endfor
+
+	# if prev_curs
+		<a href="{{prev_curs}}">prev</a>&nbsp;&nbsp;
+	# endif
+	#if next_curs
+		<a href="{{next_curs}}">next</a>
+	# endif
+	
+# endblock
