@@ -67,5 +67,6 @@ SCRIPTS = [
         'src/script/site/user.coffee',
       ],True),
     ('cms',[
+        'src/script/cms/post.coffee'
       ],False)
   ]

@@ -286,8 +286,8 @@ class ArticleForm(wtf.Form):
   category = wtf.SelectField('Category',coerce=int,choices=[(v.key.id(),v.name) for v in cms.Category.query().fetch()])
   title = wtf.StringField('Title',validators=[wtf.validators.required()], filters=[util.strip_filter])
   slug = wtf.StringField('Slug',filters=[util.strip_filter])
-  abstract = wtf.StringField('Abstract',filters=[util.strip_filter])
-  content = wtf.TextAreaField('Content',validators=[wtf.validators.required()], filters=[util.strip_filter])
+  abstract = wtf.TextAreaField('Abstract',filters=[util.strip_filter])
+  content = wtf.TextAreaField('Content',validators=[wtf.validators.required()], filters=[util.strip_filter], description='You can use markdown and <button type="button" class="btn btn-success btn-xs" data-toggle="modal" id="btnpreview" data-target="#preview"><i class="fa fa-eye">&nbsp;</i>preview</button> here')
   tags = wtf.StringField('Tags')
   commentclosed = wtf.BooleanField('Close comment',default=False)
 

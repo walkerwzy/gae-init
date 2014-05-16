@@ -7,7 +7,7 @@
 
 # macro field_description(field)
   # if field.description
-    <p class="help-block">{{field.description}}</p>
+    <p class="help-block">{{field.description|safe}}</p>
   # endif
 # endmacro
 

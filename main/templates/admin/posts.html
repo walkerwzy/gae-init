@@ -7,11 +7,11 @@
 <ol class="breadcrumb">
   <li><a href="/">Home</a></li>
   <li><a href="{{url_for('site')}}">Admin</a></li>
-  <li class="active">Ads</li>
+  <li class="active">Posts</li>
 </ol>
 <div class="col-md-4">
-	<h3>Link List</h3>
-	<hr />
+	<!-- <h3>Link List</h3> -->
+	<!-- <hr /> -->
 	<table class="table table-condensed table-bordered">
 		<tr>
 			<th>title</th>
@@ -33,31 +33,25 @@
 	</table>
 </div>
 <div class="col-md-8">
-	<h3>Editor</h3>
-	<hr/>
+	<!-- <h3>Editor</h3> -->
+	<!-- <hr/> -->
 	<form method="POST">
 		{{ form.hidden_tag() }}
 		{{ forms.select_field(form.category) }}
 		{{ forms.text_field(form.title) }}
-		{{ forms.textarea_field(form.content) }}
+		{{ forms.textarea_field(form.content, helper="abc", rows="15", id="txtcontent") }}
 		{{ forms.text_field(form.tags) }}
 		{{ forms.text_field(form.slug) }}
 		{{ forms.textarea_field(form.abstract) }}
 		{{ forms.checkbox_field(form.commentclosed) }}
 
 		<div class="row">
-			<div class="col-md-4">
+			<div class="col-md-6">
 				<button class="btn btn-primary btn-lg btn-block">
 					{{btn}}
 				</button>
 			</div>
-			<div class="col-md-4">
-				<!-- Button trigger modal -->
-				<button type="button" class="btn btn-success btn-lg btn-block" data-toggle="modal" data-target="#preview">
-				  preview
-				</button>
-			</div>
-			<div class="col-md-4">
+			<div class="col-md-6">
 			# if btn=='Create'
 				<input type="reset" value="reset" class="btn btn-warning btn-lg btn-block" />
 			# else
@@ -74,14 +68,13 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+        <h4 class="modal-title" id="myModalLabel">Preview</h4>
       </div>
       <div class="modal-body">
-        ...
+        
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -91,4 +84,5 @@
 # block scripts
 	{{ renderScript('bootstrap') }}
 	{{ renderScript('marked') }}
+	{{ renderScript('cms') }}
 # endblock
