@@ -1,48 +1,76 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html class="{% block html_class %}{{html_class}}{% endblock %}">
 <head>
-	<meta charset="UTF-8">
-	<title>{% block title %} {{title}} {% endblock %} | blog</title>
-	<style>
-		*{margin:0;padding:0;}
-		html,body{height:100%;}
-		.container,.footer{width:960px; margin:0 auto; overflow: hidden;}
-		.container{min-height: 100%;margin-bottom:-45px;}
-		.notification,.header,.ads,.wrap,.side{border:1px solid #ddd; margin:5px; padding:5px; box-sizing:border-box;}
-		.header,.ads{height:80px;}
-		.content{overflow: hidden; margin-bottom:45px;}
-		.wrap{float:left; width:700px;}
-		.side{float:right; width:240px;}
-		.footer{clear:both; border:1px solid #ddd; height:40px;line-height:40px; margin:0 auto;}
-	</style>
+    <meta charset="utf-8">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>{%- block title -%}{{title + ' | ' if title}}{%- endblock %}{{config.CONFIG_DB.brand_name}}</title>
+    # block seo
+    <meta name="keywords" content="{{config.CONFIG_DB.keywords}}" />
+    <meta name="description" content="{{config.CONFIG_DB.description}}" />
+    # endblock seo
+    {{config.CONFIG_DB.head_metas|safe if config.CONFIG_DB.head_metas}}
+    {{renderStyle('blog')}}
+    # block head
+    # endblock
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
 </head>
 <body>
-# set abc='abc'
-	<div class="container">
-		<div class="notification">
-			# for message in get_flashed_messages()
-				{{message}}<br/>
-			# endfor
-			<span>{{abc}}</span>
+    <header class="doc">
+		<div id="hd-top">
+			<p>
+				<span class="chevron_white"></span>
+				<span class="attrtxt">{{ config.CONFIG_DB.sub_name }}</span>
+			</p>
 		</div>
-		<div class="header">header</div>
-		<div class="ads">ads</div>
-		<div class="content">
-			<div class="wrap">
-		      # block content
-		      # endblock
-			</div>
-			<div class="side">
-				<!-- <div class="widget">widgets</div> -->
-				# block widgets
-					widgets<br/>
-					widgets<br/>
-					widgets<br/>
-					widgets<br/>
-				# endblock
-			</div>
+		<div id="hd-middle">
+			# include 'theme/default/_user.html'
+			<div id="cse" class="b-shadow"><div style="text-align:right;">Loading Search Engine...</div></div>
+			<hgroup>
+				<h1><a href="/" title="{{ config.CONFIG_DB.brand_name }}"><img src="/images/logo.png" alt="" /></a></h1>
+				<h2><em title="{{ config.CONFIG_DB.sub_name }}"></em></h2>
+			</hgroup>
 		</div>
-	</div>
-	<div class="footer">footer</div>
+		<div class="split-h-1"></div>
+		<div class="split-h-2"></div>
+    </header>
+    <div id="bd" role="main" class="round10">
+	    # block content
+	    # endblock
+	</div>    
+    <footer class="doc">
+		<p style="float:right;"><a href="#top"> Top&uarr;</a></p>
+		<p>
+			&copy; 2014 dig-music.com
+			<a href="/rss.xml" target="_blank"><img src="/images/rss_16x16.png" alt="rss fee" title="subscrib" /></a>
+			<a href="http://fusion.google.com/add?source=atgs&feedurl=http%3A//feedproxy.feedburner.com/dig-music/wzy"><img src="http://gmodules.com/ig/images/plus_google.gif" border="0" alt="Add to Google"></a>
+			<br/>
+			Powered by <a href="http://flask.pocoo.org/" target="_blank" title="Flask">Flask</a> 
+			&
+			<a href="http://code.google.com/appengine/" target="_blank" rel="nofollow">Google App Engine</a>
+			&
+			<a href="https://gae-init.appspot.com/" target="_blank">gae-init</a>
+			Theme by <a href="http://www.dig-music.com" target="_blank" title="walker">walker</a>
+		</p>
+    </footer>
+{{renderScript('cmslib')}}
+{{renderScript('cms')}}
+<script src="//www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript"> 
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl('007947657040434990891:sfmiwosst6g');
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.setAutoComplete(true);
+    customSearchControl.draw('cse', options);
+  }, true);
+</script>
+<link rel="stylesheet" href="//www.google.com/cse/style/look/default.css" type="text/css" />
+# include 'bit/analytics.html'
+# block footjs
+# endblock
 </body>
 </html>

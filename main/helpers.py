@@ -18,24 +18,24 @@ def utility_processor():
     if isinstance(tags,list):
       return ','.join(tags)
     return ''
-  def renderScript(name=''):
-  	if not name:
-  		# load base scripts for all pages (e==True)
-  		s = []
-  		for module, scripts, e in config.SCRIPTS:
-  			if e:
-  				s.append(parse_script_str(module,scripts))
-  		return Markup(''.join(s))
-  	else:
-  		# load specific scripts
-  		for m, s, e in config.SCRIPTS:
-  			if m == name and not e:
-  				return Markup(parse_script_str(m,s))
-  		return ''
+  def renderScript(name):
+    for module, scripts in config.SCRIPTS:
+      if module == name:
+        return Markup(parse_script_str(module,scripts))
+    return ''
+  def renderStyle(name):
+    s = []
+    for module, styles in config.STYLES:
+      if module == name:
+        for style in styles:
+          s.append(parse_style_str(style))
+        return Markup(''.join(s))
+    return ''
 
   return dict(getCateName=getCateName,
   	getTags=getTags,
-  	renderScript=renderScript)
+  	renderScript=renderScript,
+    renderStyle=renderStyle)
 
 def parse_script_str(module,scripts):
 	v = config.CURRENT_VERSION_ID
@@ -47,3 +47,11 @@ def parse_script_str(module,scripts):
 		return ''.join(s)
 	else:
 		return '<script src="/p/min/script/{0}.min.js?{1}"></script>'.format(module,v)
+
+def parse_style_str(style):
+  v = config.CURRENT_VERSION_ID
+  if config.DEVELOPMENT:
+    style = style.replace('.less','.css').replace('src/style','dst/style')
+  else:
+    style = style.replace('.less','.min.css').replace('src/style','min/style')
+  return '<link rel="stylesheet" href="/p/{0}?{1}">'.format(style,v)

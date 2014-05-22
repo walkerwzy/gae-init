@@ -4,6 +4,7 @@ from datetime import datetime
 from uuid import uuid4
 import re
 import unicodedata
+from unidecode import unidecode
 import urllib
 
 from google.appengine.datastore.datastore_query import Cursor
@@ -178,17 +179,25 @@ def uuid():
   return uuid4().hex
 
 
-_slugify_strip_re = re.compile(r'[^\w\s-]')
-_slugify_hyphenate_re = re.compile(r'[-\s]+')
+# _slugify_strip_re = re.compile(r'[^\w\s-]')
+# _slugify_hyphenate_re = re.compile(r'[-\s]+')
 
 
-def slugify(text):
-  if not isinstance(text, unicode):
-    text = unicode(text)
-  text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore')
-  text = unicode(_slugify_strip_re.sub('', text).strip().lower())
-  return _slugify_hyphenate_re.sub('-', text)
+# def slugify(text):
+#   if not isinstance(text, unicode):
+#     text = unicode(text)
+#   text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore')
+#   text = unicode(_slugify_strip_re.sub('', text).strip().lower())
+#   return _slugify_hyphenate_re.sub('-', text)
 
+_punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
+
+def slugify(text, delim=u'-'):
+    """Generates an ASCII-only slug."""
+    result = []
+    for word in _punct_re.split(text.lower()):
+        result.extend(unidecode(word).split())
+    return unicode(delim.join(result))
 
 def is_valid_username(username):
   return True if re.match('^[a-z0-9]+(?:[\.][a-z0-9]+)*$', username) else False
@@ -250,7 +259,7 @@ def settag(tagsstr):
         tagsstr = remove_html_markup(tagsstr)
         if tagsstr:
             tagsstr = tagsstr.lower()
-            tagsstr = tagsstr.replace(u"，",",")
+            tagsstr = tagsstr.replace(u"ďź",",")
             tagsstr = tagsstr.replace("/",",")
             tagsstr = tagsstr.replace("%",",")
             tagslist = map((lambda x: x.strip()),tagsstr.split(','))
@@ -263,7 +272,54 @@ def settag(tagsstr):
     else:
         return []
 
-def gettagstr(tags):
-  if isinstance(tags,list):
-    return ','.join(tags)
-  return ''
+# def gettagstr(tags):
+#   if isinstance(tags,list):
+#     return ','.join(tags)
+#   return ''
+
+import logging
+
+def retrieve_dbs_pager(
+    query, prev=False, order=None, limit=None, cursor=None, keys_only=None, **filters
+  ):
+  '''Retrieves entities from datastore, by applying cursor pagination
+  and equality filters. Returns dbs or keys and more cursor value
+  and return prev_page and next_page cursor
+  '''
+  limit = limit or config.DEFAULT_DB_LIMIT
+  cursor = Cursor.from_websafe_string(cursor) if cursor else None
+  if cursor and prev:
+    cursor = cursor.reversed()
+  model_class = ndb.Model._kind_map[query.kind]
+  if order:
+    for o in order.split(','):
+      if o.startswith('-'):
+        qry = query.order(-model_class._properties[o[1:]])
+        qry_r = query.order(model_class._properties[o[1:]])
+      else:
+        qry = query.order(model_class._properties[o])
+        qry_r = query.order(-model_class._properties[o])
+
+  for prop in filters:
+    if filters.get(prop, None) is None:
+      continue
+    if isinstance(filters[prop], list):
+      for value in filters[prop]:
+        qry = qry.filter(model_class._properties[prop] == value)
+        qry_r = qry_r.filter(model_class._properties[prop] == value)
+    else:
+      qry = qry.filter(model_class._properties[prop] == filters[prop])
+      qry_r = qry_r.filter(model_class._properties[prop] == filters[prop])
+
+  model_dbs, more_cursor, more = qry.fetch_page(
+      limit, start_cursor=cursor, keys_only=keys_only,
+    )
+  more_cursor = more_cursor.to_websafe_string() if more else None
+  prev_more_cursor = None
+  if cursor:
+    prev_model_dbs, prev_more_cursor, prev_more = qry_r.fetch_page(
+        limit, start_cursor=cursor.reversed(),keys_only=True,
+      )
+    prev_more_cursor = prev_more_cursor.to_websafe_string() if prev_more_cursor else None
+    # thought prev_more is False, but we did't render that page, so there's a page left (prev)
+  return list(model_dbs), more_cursor, prev_more_cursor

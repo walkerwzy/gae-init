@@ -6,7 +6,7 @@
 {{super()}}
 <ol class="breadcrumb">
   <li><a href="/">Home</a></li>
-  <li><a href="{{url_for('site')}}">Admin</a></li>
+  <li><a href="{{url_for('admin')}}">Admin</a></li>
   <li class="active">Posts</li>
 </ol>
 <div class="col-md-4">
@@ -17,7 +17,7 @@
 			<th>title</th>
 			<th>category</th>
 			<!-- <th>sort</th> -->
-			<th width=110>&nbsp;</th>
+			<th width=140>&nbsp;</th>
 		</tr>
 		# for item in data
 		<tr>
@@ -25,12 +25,19 @@
 			<td>{{getCateName(item.category.id())}}</td>
 			<!-- <td>{{item.sort}}</td> -->
 			<td>
+				<a href="{{url_for('plink',id=item.key.id())}}" class="btn btn-link btn-xs" target="_blank">view</a>
 				<a href="{{url_for('posts',id=item.key.id())}}" class="btn btn-link btn-xs">edit</a>
 				<a href="{{url_for('posts',act='delete',id=item.key.id())}}" class="btn btn-link btn-xs" onclick="return confirm('confirm delete?');">delete</a>
 			</td>
 		</tr>
 		# endfor
 	</table>
+	# if prev_curs
+		<a href="{{prev_curs}}">prev</a>&nbsp;&nbsp;
+	# endif
+	#if next_curs
+		<a href="{{next_curs}}">next</a>
+	# endif
 </div>
 <div class="col-md-8">
 	<!-- <h3>Editor</h3> -->
@@ -84,5 +91,5 @@
 # block scripts
 	{{ renderScript('bootstrap') }}
 	{{ renderScript('marked') }}
-	{{ renderScript('cms') }}
+	{{ renderScript('cmsadmin') }}
 # endblock

@@ -1,10 +1,133 @@
-<!doctype html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>post</title>
-</head>
-<body>
-	
-</body>
-</html>
+# extends 'theme/default/layout_index.html'
+
+# set title = obj.title
+# set cate=obj.category.get()
+
+# block seo
+<meta name="keywords" content="{{cate.name}},{%- for t in obj.tags -%}{{t}},{%- endfor %}{{obj.title}}" />
+<meta name="description" content="{{obj.abstract}}" />
+# endblock
+
+# block nav
+		<nav class="site">
+			<a href="/">Home</a>
+			# for each in cates:
+			<a href="{{each.absolute_url}}" {% if each.key == obj.category %}class="active"{% endif %}>{{each.name}}</a>
+			# endfor
+		</nav>
+# endblock
+
+# block focusimg
+			<div class="focusimg">
+				#- if ads_article_top:
+				<div class="bopbanner">{{ads_article_top|safe}}</div>
+				#- endif
+			</div>
+# endblock
+
+# block content_main
+			<div id="articlewrap" class="main-left">
+				<article class="entry">
+					<header>
+						<nav><a href="{{cate.absolute_url}}" title="{{cate.name}}">{{cate.name}}</a> &raquo; <span title="{{obj.title}}">{{obj.title}}</span></nav>
+						<h1>{{obj.title}}</h1>
+					</header>
+					<aside class="ads">
+						{% if pub_ads %}
+						<div class="yui-u first" id="ggad_index">
+							article_ad1
+						</div>
+						<div class="yui-u" id="ggad_index2">
+							article_ad2
+						</div>
+						{% else %}
+						{%if ads_articledetail_left_top%}
+						<div class="yui-u first" id="ggad_index">
+						{{ads_articledetail_left_top|safe}}
+						</div>
+						{%endif%}
+						{%if ads_articledetail_right_top%}
+						<div class="yui-u" id="ggad_index2">
+						{{ads_articledetail_right_top|safe}}
+						</div>
+						{%endif%}
+						{%endif%}
+					</aside>
+					<div class="entry-content">
+						{{obj.content|safe}}
+					</div>
+					<div class="sociable">
+						<!-- JiaThis Button BEGIN -->
+						<div class="jiathis_style">
+							<a class="jiathis_button_qzone"></a>
+							<a class="jiathis_button_tsina"></a>
+							<a class="jiathis_button_tqq"></a>
+							<a class="jiathis_button_weixin"></a>
+							<a class="jiathis_button_renren"></a>
+							<a href="http://www.jiathis.com/share?uid=1585748" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+							<a class="jiathis_counter_style"></a>
+						</div>
+						<!-- JiaThis Button END -->
+					</div>
+					{% if current_user.id > 0 %}
+					<div class="entry-admin">
+						{% if current_user.admin %}
+						Administration: <a href="{{url_for('posts',id=obj.key.id())}}">Edit</a>
+						| <a href="{{url_for('posts',act='delete',id=obj.key.id())}}" onclick="return confirm('confirm delete?');">Delete</a>
+						{%else%}
+						{% if current_user.id == obj.author.id() %}
+						Author: <a href="{{url_for('posts',id=obj.key.id())}}">Edit</a>
+						{% endif %}
+						{% endif %}
+					</div>
+					{% endif %}
+					<footer>
+						<p class="entry-permalink">Permalink: {{config.CONFIG_DB.domain}}{{url_for('plink',id=obj.key.id())}}</p>
+						<div class="vcard">Author: <address class="author"><em class="fn"><a title="Posts by {{obj.author.get().name}}" href="#">{{obj.author.get().name}}</a></em></address>  on <time pubdate="" datetime="{{obj.created.strftime("%Y-%m-%d")}}" class="published updated">{{obj.created.strftime("%Y-%m-%d")}}</time></div>
+						<p>Categories: <a title="View all posts in {{cate.name}}" href="/{{cate.name}}">{{cate.name}}</a></p>
+						{%if obj.tags%}<p>Tags: {%for tag in obj.tags%}<a href="{{url_for('tag',tag=tag)}}" title="{{tag}}">{{tag}}</a>{% if not loop.last %}, {% endif %}{%endfor%}.</p>{% endif %}
+					</footer>
+				</article>
+				<div class="split-h-img"></div>
+				<div class="entry-navi">
+					{% if obj.prev %}<span class="fright right"><a href="{{obj.prev.absolute_url}}" title="{{obj.prev}}">{{obj.prev}}</a> &#187;</span>{% endif %}
+					{% if obj.next %}<span>&#171; <a href="{{obj.next.absolute_url}}" title="{{obj.next}}">{{obj.next}}</a></span>{% endif %}
+				</div>
+				<div class="split-h-img"></div>
+				<div class="entry-promote">
+					<div class="entry-related">
+						<h2>Related articles</h2>
+						<ul>
+							{%for rp in obj.relateposts%}
+							<li><a href="{{rp.absolute_url}}" title="{{rp.title}}">{{rp.title}}</a></li>
+							{%endfor%}
+						</ul>    
+					</div>
+					<div class="entry-cate">
+						<h2>{{cate.name}}</h2>
+						<ul>
+							{%for art in cate.posts[:10]%}
+							<li><a href="{{art.absolute_url}}" title="{{art.title}}">{{art.title}}</a></li>
+							{%endfor%}
+						</ul>    
+					</div>
+				</div>
+				<div class="split-h-img"></div>
+				<div class="split-h-img"></div>
+				{%if not obj.commentclosed%}
+					<!-- UY BEGIN -->
+					<div id="uyan_frame"></div>
+					<!-- UY END -->
+				{%endif%}
+				<div class="split-h-img"></div>
+			</div>
+
+# endblock
+
+# block footjs
+<script type="text/javascript">
+	var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code_mini/jia.js?uid=1585748" charset="utf-8"></script>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=89218" async></script>
+# endblock

@@ -1,4 +1,5 @@
-{{ renderScript() }}
+{{ renderScript('libs') }}
+{{ renderScript('scripts') }}
 
 # if config.DEVELOPMENT
   <script src="http://{{request.host.split(':')[0]}}:35729/livereload.js"></script>

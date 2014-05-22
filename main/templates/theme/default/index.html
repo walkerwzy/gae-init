@@ -1,0 +1,69 @@
+# extends 'theme/default/layout_index.html'
+
+# block seo
+## obj means category name or tag name
+<meta name="keywords" content="{{obj}},{{ config.CONFIG_DB.brand_name }},{{ config.CONFIG_DB.keywords }}" />
+<meta name="description" content="{{obj}},{{ config.CONFIG_DB.description }}" />
+# endblock
+
+# block nav
+		<nav class="site">
+			<a href="/" {% if not obj %}class="active"{% endif %}>Home</a>
+			# for each in cates:
+			<a href="{{each.absolute_url}}" {% if obj and each.key.id() == obj.key.id() %}class="active"{% endif %}>{{each.name}}</a>
+			# endfor
+		</nav>
+# endblock
+
+# block focusimg
+			<div class="focusimg">
+				#- if ads_articlelist_top:
+				<div class="artlist_ggad">{{ads_articlelist_top|safe}}</div>
+				#- endif
+			</div>
+# endblock
+
+# block content_main
+			<div id="homewrap" class="main-left">
+				# for each in data:
+				<article id="entry{{ each.key.id() }}" class="hentry">
+					<h1><a href="{{each.absolute_url}}" title="{{each.title}}" class="reverse round5">{{each.title}}</a></h1>
+					<div>
+						{{each.abstract}} ...
+						<p class="read-more"><a href="{{each.absolute_url}}" rel="nofollow" class="reverse">Continue Reading ?</a></p>
+					</div>
+					<aside class="entry-left">
+						<div class="e-month">{{each.created.strftime('%b')}}</div>
+						<div class="e-day">{{each.created.strftime('%d')}}</div>
+						<div class="e-comment"><a title="comment" href="/each.get_absolute_url#postcomment">0</a></div>
+						<div class="e-r-arr"></div>
+					</aside>
+					<footer class="entry-foot">
+						<span class="m-author" title="Author"><a title="" href="#">{{each.author.get().name}}</a></span>
+						<span class="m-cates" title="Categories"><a title="View all posts in {{each.category.name}}" href="{{each.category.absolute_url}}">{{each.category.get().name}}</a></span>
+						<span class="m-tags" title="Tags">
+						#- if each.tags:
+							#- for tag in each.tags:
+								<a href="{{url_for('tag',tag=tag)}}" title="{{tag}}">{{tag}}</a>
+								{%- if not loop.last -%}, {%- endif %}
+							#- endfor
+						#- else: 
+							Not Tagged
+						#- endif
+						</span>
+					</footer>
+				</article>
+				# endfor
+				# if not data:
+				nothing here
+				# endif
+				<div class="entry-navi">
+					#- if next_page:
+						<span class="fright right"><a href="{{next_page}}" title="next page">Next</a> &#187;</span>
+					#- endif
+					#- if prev_page:
+						<span>&#171; <a href="{{prev_page}}" title="prev page">Prev</a></span>
+					#- endif
+				</div>
+			</div>
+# endblock

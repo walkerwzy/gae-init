@@ -35,6 +35,10 @@ handlers:
   static_dir: static/
   expiration: 1000d
 
+- url: /images/
+  static_dir: static/img/theme_default/
+  expiration: 1000d
+
 - url: /.*
   script: main.app
 

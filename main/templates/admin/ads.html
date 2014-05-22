@@ -5,7 +5,7 @@
 # block content
 <ol class="breadcrumb">
   <li><a href="/">Home</a></li>
-  <li><a href="{{url_for('site')}}">Admin</a></li>
+  <li><a href="{{url_for('admin')}}">Admin</a></li>
   <li class="active">Ads</li>
 </ol>
 <div class="col-md-8">
@@ -38,7 +38,7 @@
 		{{ form.hidden_tag() }}
 		{{ forms.text_field(form.name,required='required') }}
 		{{ forms.textarea_field(form.value) }}
-		{{ forms.text_field(form.description) }}
+		{{ forms.textarea_field(form.description) }}
 
 		<div class="row">
 			<div class="col-md-6">

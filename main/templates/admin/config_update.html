@@ -4,7 +4,7 @@
 # block content
 <ol class="breadcrumb">
   <li><a href="/">Home</a></li>
-  <li><a href="{{url_for('site')}}">Admin</a></li>
+  <li><a href="{{url_for('admin')}}">Admin</a></li>
   <li class="active">Configuration</li>
 </ol>
   <!-- <div class="page-header"> -->
@@ -48,6 +48,7 @@
   </div>
   <div class="tab-pane" id="ext">
     <br />
+    {{forms.text_field(form.domain)}}
     {{forms.text_field(form.sub_name)}}
     {{forms.textarea_field(form.description)}}
     {{forms.text_field(form.keywords)}}

@@ -1,0 +1,12 @@
+<div class="fright login">
+# if current_user.id > 0
+	user: <strong>{{ current_user.name }}</strong> | <a href="{{url_for('profile')}}">Profile</a> |  
+	# if current_user.admin
+	<!-- <a href="#">"Flush Cache"</a> |  -->
+	<a href="{{url_for('admin')}}">Admin</a> | 
+	# endif
+	<a href="{{url_for('signout')}}">Sign out</a>
+# else
+	<a href="{{url_for('signin')}}">Secure login with google account</a>
+# endif
+</div>

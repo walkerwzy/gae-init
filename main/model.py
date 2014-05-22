@@ -40,6 +40,7 @@ class Config(Base, modelx.ConfigX):
   keywords = ndb.StringProperty(default='')
   head_metas = ndb.StringProperty(default='')
   google_cse_cs = ndb.StringProperty(default='')
+  domain = ndb.StringProperty(default='http://')
 
   _PROPERTIES = Base._PROPERTIES.union({
       'analytics_id',
@@ -57,7 +58,8 @@ class Config(Base, modelx.ConfigX):
       'sub_name',
       'keywords',
       'head_metas',
-      'google_cse_cs'
+      'google_cse_cs',
+      'domain'
     })
 
 

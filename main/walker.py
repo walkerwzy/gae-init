@@ -1,3 +1,5 @@
+# coding: utf-8
+
 from main import app
 import flask
 from flask.ext import wtf

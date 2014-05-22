@@ -228,9 +228,10 @@ def is_style_modified(target):
 
 
 def compile_all_dst():
-  for source in config.STYLES:
-    compile_style(os.path.join(DIR_STATIC, source), DIR_DST_STYLE, True)
-  for _, scripts, e in config.SCRIPTS:
+  for _, styles in config.STYLES:
+    for source in styles:
+      compile_style(os.path.join(DIR_STATIC, source), DIR_DST_STYLE, True)
+  for _, scripts in config.SCRIPTS:
     for source in scripts:
       compile_script(os.path.join(DIR_STATIC, source), DIR_DST_SCRIPT)
 
@@ -239,10 +240,11 @@ def update_path_separators():
   def fixit(path):
     return path.replace('\\', '/').replace('/', os.sep)
 
-  for idx in xrange(len(config.STYLES)):
-    config.STYLES[idx] = fixit(config.STYLES[idx])
+  for _, styles in config.STYLES:
+    for idx in xrange(len(styles)):
+      styles[idx] = fixit(styles[idx])
 
-  for _, scripts, everywhere in config.SCRIPTS:
+  for _, scripts in config.SCRIPTS:
     for idx in xrange(len(scripts)):
       scripts[idx] = fixit(scripts[idx])
 
@@ -522,7 +524,7 @@ def run_minify():
   remove_file_dir(DIR_MIN)
   make_dirs(DIR_MIN_SCRIPT)
 
-  for source in config.STYLES:
+  for source in [sources for module, sources in config.STYLES]:
     compile_style(os.path.join(DIR_STATIC, source), DIR_MIN_STYLE)
 
   for module, scripts in config.SCRIPTS:

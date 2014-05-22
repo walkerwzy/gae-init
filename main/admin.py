@@ -3,6 +3,8 @@
 from flask.ext import wtf
 from google.appengine.api import app_identity
 from google.appengine.ext import ndb
+from google.appengine.datastore.datastore_query import Cursor
+from markdown import markdown
 import flask
 
 import auth
@@ -12,6 +14,8 @@ import modelcms as cms
 import util
 
 from main import app
+
+PAGESIZE = 15
 
 ###########################################
 # site configuration
@@ -32,8 +36,9 @@ class ConfigUpdateForm(wtf.Form):
   description = wtf.TextAreaField('Description',filters=[util.strip_filter])
   sub_name = wtf.StringField('Site subname',filters=[util.strip_filter])
   keywords = wtf.StringField('Keywords',filters=[util.strip_filter])
-  head_metas = wtf.TextAreaField('Head metas',filters=[util.strip_filter])
+  head_metas = wtf.TextAreaField('Head metas',filters=[util.strip_filter],default="http://")
   google_cse_cs = wtf.StringField('Google cse cs')
+  domain = wtf.StringField('Doman',filters=[util.strip_filter])
 
 @app.route('/_s/admin/config/', endpoint='admin_config_update_service')
 @app.route('/admin/config/', methods=['GET', 'POST'])
@@ -48,7 +53,7 @@ def admin_config_update():
     config_db.put()
     reload(config)
     app.config.update(CONFIG_DB=config_db)
-    return flask.redirect(flask.url_for('welcome'))
+    return flask.redirect(flask.url_for('admin_config_update'))
 
   if flask.request.path.startswith('/_s/'):
     return util.jsonify_model_db(config_db)
@@ -80,7 +85,7 @@ class CategoryForm(wtf.Form):
   slug = wtf.StringField('Slug',filters=[util.strip_filter])
   sort = wtf.IntegerField('Sort',default=0)
 
-@app.route('/admin')
+@app.route('/admin',endpoint="admin")
 @auth.admin_required
 def site():
   return flask.render_template('admin/site.html')
@@ -152,8 +157,8 @@ def category(cateid=0,act=''):
 
 class AdsForm(wtf.Form):
   name = wtf.StringField('Name',validators=[wtf.validators.required()], filters=[util.strip_filter])
-  value = wtf.StringField('Value',filters=[util.strip_filter])
-  description = wtf.StringField('Description',filters=[util.strip_filter])
+  value = wtf.TextAreaField('Value',filters=[util.strip_filter])
+  description = wtf.TextAreaField('Description',filters=[util.strip_filter])
 
 
 @app.route('/_s/admin/ads',endpoint='admin_site_ads')
@@ -221,7 +226,7 @@ def ads(id=0,act=''):
 class LinksForm(wtf.Form):
   name = wtf.StringField('Name',validators=[wtf.validators.required()], filters=[util.strip_filter])
   url = wtf.StringField('Value',filters=[util.strip_filter],default="http://")
-  sort = wtf.IntegerField('Description',default=0)
+  sort = wtf.IntegerField('Sort',default=0)
 
 @app.route('/_s/admin/links',endpoint='admin_site_links')
 @app.route('/admin/links', methods=['GET','POST'])
@@ -299,26 +304,48 @@ class ArticleForm(wtf.Form):
 def posts(id=0,act=''):
   if act=='delete' and id:
     #delete
-    k=ndb.Key(cms.Article,id)
-    k.delete()
+    # k=ndb.Key(cms.Article,id)
+    article=cms.Article.get_by_id(id)
+    update_category(None,article.category)
+    update_tags([],article.tags)
+    article.key.delete()
     flask.flash('delete post success', category='success')
     return flask.redirect(flask.url_for('posts'))
-  query=cms.Article.query()
-  # if flask.request.path.startswith('/_s/'):
-  #   return util.jsonify_model_dbs(query.fetch())
+  # pager
+  article_qry=cms.Article.query()
+  # return util.jsonify_model_dbs(article_qry)
+  next_curs, prev_curs = None, None
+  curs = Cursor.from_websafe_string(util.param('curs')) if util.param('curs') else None
+  if curs and util.param('prev'):
+    curs = curs.reversed()
+  query, nextcurs, more = article_qry.order(-cms.Article.created).fetch_page(PAGESIZE,start_cursor=curs)
+  if more and nextcurs:
+    next_curs = flask.url_for('posts',curs=nextcurs.urlsafe())
+  if curs:
+    revcurs = curs.reversed()
+    query2, precurs, more = article_qry.order(cms.Article.created).fetch_page(PAGESIZE,start_cursor=revcurs)
+    if precurs:
+      prev_curs = flask.url_for('posts',curs=precurs.urlsafe(),prev=1)
+
   btn = 'Create'
   form = ArticleForm()
   if id:
     obj=cms.Article.get_by_id(id)
     if not obj:
       flask.flash('invalid obj id', category='danger')
-      return flask.render_template('admin/posts.html',form=form,data=query,btn=btn)
+      return flask.render_template(
+        'admin/posts.html',
+        form=form,
+        data=query,
+        btn=btn,
+        next_curs=next_curs,
+        prev_curs=prev_curs)
     else:
       btn = 'Save'
       form=ArticleForm(obj=obj)
       if flask.request.method=='GET':
         form.category.data=obj.category.id()
-        form.tags.data=util.gettagstr(obj.tags)
+        form.tags.data=obj.str_tags
   if form.validate_on_submit() and flask.request.method=='POST':
     name=form.title.data
     cate=ndb.Key(cms.Category,form.category.data)
@@ -327,33 +354,102 @@ def posts(id=0,act=''):
       # update
       # check existence
       if obj.title != name:
-        if query.filter(cms.Article.title==name,
+        if article_qry.filter(cms.Article.title==name,
           cms.Article.key!=ndb.Key(cms.Article,id)).get():
           flask.flash('title exist',category='danger')
-          return flask.render_template('admin/posts.html',form=form,data=query,btn=btn)
+          return flask.render_template(
+            'admin/posts.html',
+            form=form,
+            data=query,
+            btn=btn,
+            next_curs=next_curs,
+            prev_curs=prev_curs)
       form.category.data=cate
       form.tags.data=tags
+      form.abstract.data=get_abstract(form.abstract.data,markdown(form.content.data))
+
+      update_category(form.category.data,obj.category)
+      update_tags(tags,obj.tags)
+
       form.populate_obj(obj)
       obj.put()
       flask.flash('update success',category='success')
     else:
       # create
       # check existence
-      if query.filter(cms.Article.title==name).get():
+      if article_qry.filter(cms.Article.title==name).get():
         flask.flash('title exist',category="danger")
         return flask.render_template('admin/posts.html',form=form,data=query,btn=btn)
+      # todo: abstract
       item = cms.Article(
         author=auth.current_user_key(),
         title=name,
         category=cate,
         slug=form.slug.data,
-        abstract=form.abstract.data,
+        abstract= get_abstract(form.abstract.data,form.content.data),
         content=form.content.data,
         tags=tags,
         commentclosed=bool(form.commentclosed.data))
       item.put()
+      update_category(cate)
+      update_tags(tags)
       flask.flash('post success',category='success')
     return flask.redirect(flask.url_for('posts'))
   #get
   else:
-    return flask.render_template('admin/posts.html',form=form,data=query,btn=btn)
+    return flask.render_template(
+      'admin/posts.html',
+      form=form,
+      data=query,
+      btn=btn,
+      next_curs=next_curs,
+      prev_curs=prev_curs)
+
+def get_abstract(source, bkup):
+  if not source:
+    source = bkup
+  source = util.remove_html_markup(source)
+  return source[:200]
+
+@ndb.transactional(xg=True)
+def update_category(new_key=None, old_key=None):
+  try:
+    if old_key == new_key:
+      return
+    if new_key:
+      nc = new_key.get()
+      nc.entrycount = nc.entrycount+1 if nc.entrycount>0 else 1
+      nc.put()
+    if old_key:
+      oc = old_key.get()
+      oc.entrycount = oc.entrycount-1 if oc.entrycount>0 else 0
+      oc.put()  
+  except Exception:
+    pass
+
+def update_tags(new_tags, old_tags=[]):
+  try:
+    tag_qry = cms.Tag.query()
+    #decrease not used
+    for t in old_tags:
+      if t not in new_tags:
+        tags = tag_qry.filter(cms.Tag.name == t).fetch()
+        if tags:
+          tag = tags[0]
+          tag.entrycount = tag.entrycount-1 if tag.entrycount>0 else 0
+          if tag.entrycount == 0:
+            tag.key.delete()
+          else:
+            tag.put()
+    #increase new added
+    for t in new_tags:
+      if t not in old_tags:
+          tags = tag_qry.filter(cms.Tag.name == t).fetch()
+          if tags:
+            tag = tags[0]
+            tag.entrycount = tag.entrycount+1 if tag.entrycount>0 else 1
+          else:
+            tag = cms.Tag(name=t,entrycount=1)
+          tag.put()
+  except Exception:
+    pass

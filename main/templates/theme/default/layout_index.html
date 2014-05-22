@@ -1,0 +1,82 @@
+# extends 'theme/default/layout.html'
+
+# block content
+	# block nav
+	# endblock
+	<div class="wraper">
+	# block focusimg
+	# endblock
+	# block content_main
+	# endblock
+	<div id="sidebar" class="round5">
+				<h2>Gadgets</h2>
+				# if True:
+				<div class="gadget">
+				<h3>Administration</h3>
+				<ul class="wrap_list">
+				<li class="chevron_blue"><a href="{{url_for('posts')}}">Add Article</a></li>
+				<li class="chevron_blue"><a href="#">My articles</a></li>
+					# if True:
+					<li class="chevron_blue"><a href="#">Recent comments</a></li>
+					<li class="chevron_blue"><a href="{{url_for('admin')}}">Administration</a></li>
+					# endif
+				</ul>
+				</div>
+				<div class="split-h-img"></div>
+				# endif
+				<div class="gadget">
+					<h3>Category List</h3>
+					<ul class="wrap_list">
+						# for each in cates:
+						<li class="chevron_blue"><a href="{{each.absolute_url}}" title="{{each.name}}">{{each.name}}</a></li>
+						# endfor
+					</ul>
+				</div>
+				<div class="split-h-img"></div>
+				# if False:
+				<div class="gadget">
+					<h3>Recent Comment</h3>
+					<ul class="wrap_list">
+						# for each in []:
+						<li class="comment">{{each.name}}@<a href="{{each.entry.get_absolute_url}}#{{each.key.id()}}" title='{{each.message}}' target="_blank">{{each.entry.title|safe}}</a></li>
+						# endfor
+					</ul>
+				</div>
+				<div class="split-h-img"></div>
+				# endif
+				# if taglist:
+				<div class="gadget">
+					<h3>Tag Cloud</h3>
+					# for each in tag_list:
+					<a href="/tag/{{each.tag|safe}}" data="{{each.entrycount}}" title="{{each.entrycount}} entries" class="tagcloud">{{each.tag|safe}}</a>
+					# endfor
+				</div>
+				<div class="split-h-img"></div>
+				# endif
+				<div class="gadget">
+					<h3>SNS</h3>
+					&bull; <a href="http://weibo.com/walkerwzy" target="_blank">新浪微博</a>
+					&bull; <a href="http://t.qq.com/walkerwzy" target="_blank">腾讯微博</a>
+					&bull; <a href="http://fanfou.com/walkerwang" target="_blank">饭否</a>
+				</div>
+				<div class="split-h-img"></div>		
+				# if links_list:
+				<div class="gadget">
+					<h3>Links</h3>
+					<ul class="wrap_list">
+						# for each in links_list:
+						<li class="link"><a href="{{each.url}}" title="{{each.name}}" target="_blank" rel="nofollow">{{each.name}}</a></li>
+						# endfor
+					</ul>
+				</div>
+				# endif
+				# if ads_sidebar_ads:
+				<div class="split-h-img"></div>
+				<div class="gadget">{{ads_sidebar_ads|safe}}</div>
+				# endif
+			</div>
+		</div>
+
+	# block home_foot
+	# endblock
+# endblock

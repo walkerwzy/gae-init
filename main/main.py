@@ -15,13 +15,14 @@ app.jinja_env.line_comment_prefix = '##'
 app.jinja_env.globals.update(slugify=util.slugify)
 app.jinja_env.globals.update(update_query_argument=util.update_query_argument)
 
+import helpers
 
 import admin
 import auth
 import task
 import user
 
-import helpers
+import blog_controller
 
 
 if config.DEVELOPMENT:
@@ -32,7 +33,7 @@ if config.DEVELOPMENT:
 ###############################################################################
 # Main page
 ###############################################################################
-@app.route('/')
+@app.route('/welcome')
 def welcome():
   return flask.render_template('welcome.html', html_class='welcome')
 
