@@ -16,6 +16,14 @@ import util
 from main import app
 
 PAGESIZE = 15
+ADS_POSITION = [
+  'sidebar_ads',
+  'index_left_top',
+  'articlelist_top',
+  'article_top',
+  'articlelist_top',
+  'articledetail_left_top',
+  'articledetail_right_top']
 
 ###########################################
 # site configuration
@@ -187,6 +195,14 @@ def ads(id=0,act=''):
     else:
       btn = 'Save'
       form=AdsForm(obj=obj)
+  elif flask.request.method=='GET':
+    # init some ad itmes
+    ads_for_add = []
+    for ad in ADS_POSITION:
+      if not query.filter(cms.Ads.name == ad).get():
+        ads_for_add.append(cms.Ads(name=ad))
+    if ads_for_add:
+      ndb.put_multi(ads_for_add)
   if form.validate_on_submit():
     name=form.name.data.lower()
     if id:
@@ -366,7 +382,7 @@ def posts(id=0,act=''):
             prev_curs=prev_curs)
       form.category.data=cate
       form.tags.data=tags
-      form.abstract.data=get_abstract(form.abstract.data,markdown(form.content.data))
+      form.abstract.data=get_abstract(form.abstract.data,form.content.data)
 
       update_category(form.category.data,obj.category)
       update_tags(tags,obj.tags)
@@ -408,7 +424,7 @@ def posts(id=0,act=''):
 def get_abstract(source, bkup):
   if not source:
     source = bkup
-  source = util.remove_html_markup(source)
+  source = util.remove_html_markup(markdown(source))
   return source[:200]
 
 @ndb.transactional(xg=True)

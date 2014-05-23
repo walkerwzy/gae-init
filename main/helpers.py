@@ -14,10 +14,16 @@ def utility_processor():
     if c:
       return c.name
     return ''
-  def getTags(tags):
-    if isinstance(tags,list):
-      return ','.join(tags)
-    return ''
+  def getTags():
+    return cms.Tag.query().order(-cms.Tag.entrycount).fetch(50)
+  def getLinks():
+    return cms.Links.query().order(cms.Links.sort)
+  def getAds(position):
+    ad_dbs = cms.Ads.query(cms.Ads.name==position).fetch(1)
+    if ad_dbs:
+      return ad_dbs[0].value
+    else:
+      return ''
   def renderScript(name):
     for module, scripts in config.SCRIPTS:
       if module == name:
@@ -34,6 +40,8 @@ def utility_processor():
 
   return dict(getCateName=getCateName,
   	getTags=getTags,
+    getAds=getAds,
+    getLinks=getLinks,
   	renderScript=renderScript,
     renderStyle=renderStyle)
 

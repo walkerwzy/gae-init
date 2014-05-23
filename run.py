@@ -524,8 +524,10 @@ def run_minify():
   remove_file_dir(DIR_MIN)
   make_dirs(DIR_MIN_SCRIPT)
 
-  for source in [sources for module, sources in config.STYLES]:
-    compile_style(os.path.join(DIR_STATIC, source), DIR_MIN_STYLE)
+  # for source in [sources for module, sources in config.STYLES]:
+  for module, sources in config.STYLES:
+    for source in sources:
+      compile_style(os.path.join(DIR_STATIC, source), DIR_MIN_STYLE)
 
   for module, scripts in config.SCRIPTS:
     scripts = uniq(scripts)

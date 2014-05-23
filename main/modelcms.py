@@ -31,7 +31,8 @@ class Category(Base):
             'name',
             'slug',
             'sort',
-            'entrycount'
+            'entrycount',
+            'absolute_url'
         })
 
 class Tag(Base):
@@ -47,11 +48,12 @@ class Tag(Base):
 
     @property
     def absolute_url(self):
-        return url_for('cate', tag=self.name)
+        return url_for('tag', tag=self.name)
 
     _PROPERTIES = Base._PROPERTIES.union({
             'name',
-            'entrycount'
+            'entrycount',
+            'absolute_url'
         })
 
 class Ads(Base):
@@ -139,11 +141,11 @@ class Article(Base):
             else:
                 return None
         else:
-            arts = Article.query().order(-Article.created).filter(Article.created>self.created).fetch(1)
-            if arts:
-                self.next_key = arts[0].key
+            art = Article.query().order(-Article.created).filter(Article.created>self.created).get()
+            if art:
+                self.next_key = art.key
                 self.put()
-                return arts[0]
+                return art
             else:
                 return None
     
@@ -156,11 +158,11 @@ class Article(Base):
             else:
                 return None
         else:
-            arts = Article.query().order(-Article.created).filter(Article.created<self.created).fetch(1)
-            if arts:
-                self.prev_key = arts[0].key
+            art = Article.query().order(-Article.created).filter(Article.created<self.created).get()
+            if art:
+                self.prev_key = art.key
                 self.put()
-                return arts[0]
+                return art
             else:
                 return None    
 

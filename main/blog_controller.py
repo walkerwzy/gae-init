@@ -16,7 +16,10 @@ import logging
 from main import app
 from markdown import markdown
 
-PAGESIZE = 2
+from urlparse import urljoin
+from werkzeug.contrib.atom import AtomFeed
+
+PAGESIZE = 10
 
 ###########################################
 # post with id
@@ -123,10 +126,24 @@ def tag(tag):
 		prev_page=prev_page,
 		next_page=next_page)
 
-@app.route('/aaa')
-def aaa():
-	get_relate_posts(['spotify','pandora','apple','sgeway'])
-	return flask.Response('aaa')
+@app.route('/recent.atom')
+def rss():
+	feed = AtomFeed('Dig-Music.com',
+		feed_url=flask.request.url,
+		url=flask.request.url_root,
+		subtitle="Recent Articles")
+	art_dbs = cms.Article.query().order(-cms.Article.modified).fetch(20)
+	for art in art_dbs:
+		feed.add(
+				art.title,
+				art.content,
+				author=art.author.get().name,
+				url=full_url(art.absolute_url),
+				id=art.key.id(),
+				updated=art.modified,
+				published=art.created
+			)
+	return feed.get_response()
 
 ###########################################
 # helper
@@ -137,3 +154,6 @@ def cate_list():
 
 def theme_file(pagename):
 	return '%s/%s'%('theme/default',pagename)
+
+def full_url(url):
+	return urljoin(flask.request.url_root, url)

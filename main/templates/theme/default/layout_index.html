@@ -1,5 +1,9 @@
 # extends 'theme/default/layout.html'
 
+# set ads_sidebar_ads = getAds('sidebar_ads')
+# set tag_list = getTags()
+# set links_list= getLinks()
+
 # block content
 	# block nav
 	# endblock
@@ -44,11 +48,11 @@
 				</div>
 				<div class="split-h-img"></div>
 				# endif
-				# if taglist:
+				# if tag_list:
 				<div class="gadget">
 					<h3>Tag Cloud</h3>
 					# for each in tag_list:
-					<a href="/tag/{{each.tag|safe}}" data="{{each.entrycount}}" title="{{each.entrycount}} entries" class="tagcloud">{{each.tag|safe}}</a>
+					<a href="{{each.absolute_url}}" data="{{each.entrycount}}" title="{{each.entrycount}} entries" class="tagcloud">{{each.name|safe}}</a>
 					# endfor
 				</div>
 				<div class="split-h-img"></div>
@@ -65,13 +69,13 @@
 					<h3>Links</h3>
 					<ul class="wrap_list">
 						# for each in links_list:
-						<li class="link"><a href="{{each.url}}" title="{{each.name}}" target="_blank" rel="nofollow">{{each.name}}</a></li>
+						<li class="link"><a href="{{each.value}}" title="{{each.name}}" target="_blank" rel="nofollow">{{each.name}}</a></li>
 						# endfor
 					</ul>
 				</div>
+				<div class="split-h-img"></div>
 				# endif
 				# if ads_sidebar_ads:
-				<div class="split-h-img"></div>
 				<div class="gadget">{{ads_sidebar_ads|safe}}</div>
 				# endif
 			</div>

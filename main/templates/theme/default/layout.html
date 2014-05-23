@@ -5,6 +5,8 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>{%- block title -%}{{title + ' | ' if title}}{%- endblock %}{{config.CONFIG_DB.brand_name}}</title>
+    <link href="{{ url_for('rss') }}" rel="alternate" title="Recent Changes" type="application/atom+xml">
+	<link rel="stylesheet" href="//www.google.com/cse/style/look/default.css" type="text/css" />
     # block seo
     <meta name="keywords" content="{{config.CONFIG_DB.keywords}}" />
     <meta name="description" content="{{config.CONFIG_DB.description}}" />
@@ -44,7 +46,7 @@
 		<p style="float:right;"><a href="#top"> Top&uarr;</a></p>
 		<p>
 			&copy; 2014 dig-music.com
-			<a href="/rss.xml" target="_blank"><img src="/images/rss_16x16.png" alt="rss fee" title="subscrib" /></a>
+			<a href="{{url_for('rss')}}" target="_blank"><img src="/images/rss_16x16.png" alt="rss fee" title="subscrib" /></a>
 			<a href="http://fusion.google.com/add?source=atgs&feedurl=http%3A//feedproxy.feedburner.com/dig-music/wzy"><img src="http://gmodules.com/ig/images/plus_google.gif" border="0" alt="Add to Google"></a>
 			<br/>
 			Powered by <a href="http://flask.pocoo.org/" target="_blank" title="Flask">Flask</a> 
@@ -68,9 +70,8 @@
     customSearchControl.draw('cse', options);
   }, true);
 </script>
-<link rel="stylesheet" href="//www.google.com/cse/style/look/default.css" type="text/css" />
-# include 'bit/analytics.html'
 # block footjs
 # endblock
+# include 'bit/analytics.html'
 </body>
 </html>

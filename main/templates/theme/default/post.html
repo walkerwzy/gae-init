@@ -1,7 +1,8 @@
 # extends 'theme/default/layout_index.html'
 
 # set title = obj.title
-# set cate=obj.category.get()
+# set cate = obj.category.get()
+# set ads_article_top = getAds('article_top')
 
 # block seo
 <meta name="keywords" content="{{cate.name}},{%- for t in obj.tags -%}{{t}},{%- endfor %}{{obj.title}}" />
