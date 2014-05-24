@@ -123,7 +123,7 @@ def category(cateid=0,act=''):
     obj=cms.Category.get_by_id(cateid)
     if not obj:
       flask.flash('invalid obj id', category='danger')
-      return flask.render_template('admin/category.html',form=form,data=query,btn=btn)
+      return flask.render_template('admin/category.html',has_json=True,form=form,data=query,btn=btn)
     else:
       btn = 'Save'
       form=CategoryForm(obj=obj)
@@ -136,7 +136,7 @@ def category(cateid=0,act=''):
         if query.filter(cms.Category.name==name,
           cms.Category.key!=ndb.Key(cms.Category,cateid)).get():
           flask.flash('name exist',category='danger')
-          return flask.render_template('admin/category.html',form=form,data=query,btn=btn)
+          return flask.render_template('admin/category.html',has_json=True,form=form,data=query,btn=btn)
       form.name.data=name
       form.populate_obj(obj)
       obj.put()
@@ -156,7 +156,7 @@ def category(cateid=0,act=''):
     return flask.redirect(flask.url_for('category'))
   #get
   else:
-    return flask.render_template('admin/category.html',form=form,data=query,btn=btn)
+    return flask.render_template('admin/category.html',has_json=True,form=form,data=query,btn=btn)
 
 
 ###########################################
@@ -191,7 +191,7 @@ def ads(id=0,act=''):
     obj=cms.Ads.get_by_id(id)
     if not obj:
       flask.flash('invalid obj id', category='danger')
-      return flask.render_template('admin/ads.html',form=form,data=query,btn=btn)
+      return flask.render_template('admin/ads.html',has_json=True,form=form,data=query,btn=btn)
     else:
       btn = 'Save'
       form=AdsForm(obj=obj)
@@ -212,7 +212,7 @@ def ads(id=0,act=''):
         if query.filter(cms.Ads.name==name,
           cms.Ads.key!=ndb.Key(cms.Ads,id)).get():
           flask.flash('name exist',category='danger')
-          return flask.render_template('admin/ads.html',form=form,data=query,btn=btn)
+          return flask.render_template('admin/ads.html',has_json=True,form=form,data=query,btn=btn)
       form.name.data=name
       form.populate_obj(obj)
       obj.put()
@@ -222,7 +222,7 @@ def ads(id=0,act=''):
       # check existence
       if query.filter(cms.Ads.name==name).get():
         flask.flash('name exist',category="danger")
-        return flask.render_template('admin/ads.html',form=form,data=query,btn=btn)
+        return flask.render_template('admin/ads.html',has_json=True,form=form,data=query,btn=btn)
       item = cms.Ads(
         name=name,
         value=form.value.data,
@@ -232,7 +232,7 @@ def ads(id=0,act=''):
     return flask.redirect(flask.url_for('ads'))
   #get
   else:
-    return flask.render_template('admin/ads.html',form=form,data=query,btn=btn)
+    return flask.render_template('admin/ads.html',has_json=True,form=form,data=query,btn=btn)
 
 
 ###########################################
@@ -265,7 +265,7 @@ def links(id=0,act=''):
     obj=cms.Links.get_by_id(id)
     if not obj:
       flask.flash('invalid obj id', category='danger')
-      return flask.render_template('admin/links.html',form=form,data=query,btn=btn)
+      return flask.render_template('admin/links.html',has_json=True,form=form,data=query,btn=btn)
     else:
       btn = 'Save'
       form=LinksForm(obj=obj)
@@ -278,7 +278,7 @@ def links(id=0,act=''):
         if query.filter(cms.Links.name==name,
           cms.Links.key!=ndb.Key(cms.Links,id)).get():
           flask.flash('name exist',category='danger')
-          return flask.render_template('admin/links.html',form=form,data=query,btn=btn)
+          return flask.render_template('admin/links.html',has_json=True,form=form,data=query,btn=btn)
       form.populate_obj(obj)
       obj.put()
       flask.flash('update success',category='success')
@@ -287,7 +287,7 @@ def links(id=0,act=''):
       # check existence
       if query.filter(cms.Links.name==name).get():
         flask.flash('name exist',category="danger")
-        return flask.render_template('admin/links.html',form=form,data=query,btn=btn)
+        return flask.render_template('admin/links.html',has_json=True,form=form,data=query,btn=btn)
       item = cms.Links(
         name=name,
         url=form.url.data,
@@ -297,7 +297,7 @@ def links(id=0,act=''):
     return flask.redirect(flask.url_for('links'))
   #get
   else:
-    return flask.render_template('admin/links.html',form=form,data=query,btn=btn)
+    return flask.render_template('admin/links.html',has_json=True,form=form,data=query,btn=btn)
 
 ###########################################
 # Article

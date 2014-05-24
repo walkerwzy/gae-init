@@ -85,7 +85,7 @@
 					<footer>
 						<p class="entry-permalink">Permalink: {{config.CONFIG_DB.domain}}{{url_for('plink',id=obj.key.id())}}</p>
 						<div class="vcard">Author: <address class="author"><em class="fn"><a title="Posts by {{obj.author.get().name}}" href="#">{{obj.author.get().name}}</a></em></address>  on <time pubdate="" datetime="{{obj.created.strftime("%Y-%m-%d")}}" class="published updated">{{obj.created.strftime("%Y-%m-%d")}}</time></div>
-						<p>Categories: <a title="View all posts in {{cate.name}}" href="/{{cate.name}}">{{cate.name}}</a></p>
+						<p>Categories: <a title="View all posts in {{cate.name}}" href="{{cate.absolute_url}}">{{cate.name}}</a></p>
 						{%if obj.tags%}<p>Tags: {%for tag in obj.tags%}<a href="{{url_for('tag',tag=tag)}}" title="{{tag}}">{{tag}}</a>{% if not loop.last %}, {% endif %}{%endfor%}.</p>{% endif %}
 					</footer>
 				</article>
@@ -113,9 +113,9 @@
 						</ul>    
 					</div>
 				</div>
-				<div class="split-h-img"></div>
-				<div class="split-h-img"></div>
+				<!-- <div class="split-h-img"></div> -->
 				{%if not obj.commentclosed%}
+				<!-- <div class="split-h-img"></div> -->
 					<!-- UY BEGIN -->
 					<div id="uyan_frame"></div>
 					<!-- UY END -->

@@ -101,9 +101,8 @@ def category(category):
 ###########################################
 @app.route('/tag/<tag>/',endpoint="tag")
 def tag(tag):
-	tag_db=cms.Tag.query(cms.Tag.name == tag).fetch()
+	tag_db=cms.Tag.query(cms.Tag.name == tag).get()
 	if tag_db:
-		t = tag_db[0]
 		article_qry = cms.Article.query()
 		article_db, next_page, prev_page = util.retrieve_dbs_pager(
 			article_qry,
@@ -111,16 +110,16 @@ def tag(tag):
 			order='-created',
 			limit=PAGESIZE,
 			cursor=util.param('curs'),
-			tags=t.name)
+			tags=tag_db.name)
 		if next_page:
 			next_page = flask.url_for('tag',tag=tag,curs=next_page)
 		if prev_page:
 			prev_page = flask.url_for('tag',tag=tag,curs=prev_page,prev=1)
 	else:
-		next_page, prev_page, article_db, obj = None, None, None, None
+		next_page, prev_page, article_db, obj = None, None, [], None
 	return flask.render_template(
 		theme_file('index.html'),
-		obj=t,
+		obj=tag_db,
 		cates=cate_list(),
 		data=article_db,
 		prev_page=prev_page,
@@ -150,7 +149,7 @@ def rss():
 ###########################################
 def cate_list():
 	'''get category list'''
-	return cms.Category.query()
+	return cms.Category.query().order(cms.Category.sort)
 
 def theme_file(pagename):
 	return '%s/%s'%('theme/default',pagename)

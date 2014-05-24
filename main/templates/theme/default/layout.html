@@ -44,10 +44,10 @@
 	</div>    
     <footer class="doc">
 		<p style="float:right;"><a href="#top"> Top&uarr;</a></p>
-		<p>
+		<p style="color:gray;">
 			&copy; 2014 dig-music.com
-			<a href="{{url_for('rss')}}" target="_blank"><img src="/images/rss_16x16.png" alt="rss fee" title="subscrib" /></a>
-			<a href="http://fusion.google.com/add?source=atgs&feedurl=http%3A//feedproxy.feedburner.com/dig-music/wzy"><img src="http://gmodules.com/ig/images/plus_google.gif" border="0" alt="Add to Google"></a>
+			<a href="{{url_for('rss')}}" target="_blank"><img src="/images/rss_16x16.png" alt="rss feed" title="subscrib" /></a>
+			<!-- <a href="http://fusion.google.com/add?source=atgs&feedurl=http%3A//feedproxy.feedburner.com/dig-music/wzy"><img src="http://gmodules.com/ig/images/plus_google.gif" border="0" alt="Add to Google"></a> -->
 			<br/>
 			Powered by <a href="http://flask.pocoo.org/" target="_blank" title="Flask">Flask</a> 
 			&
@@ -55,6 +55,9 @@
 			&
 			<a href="https://gae-init.appspot.com/" target="_blank">gae-init</a>
 			Theme by <a href="http://www.dig-music.com" target="_blank" title="walker">walker</a>
+			<br/>
+			Version: {{config.CURRENT_VERSION_NAME}}
+        	(<time datetime="{{config.CURRENT_VERSION_DATE}}">{{config.CURRENT_VERSION_DATE}}</time>)
 		</p>
     </footer>
 {{renderScript('cmslib')}}

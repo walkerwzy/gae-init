@@ -25,6 +25,10 @@ handlers:
   static_files: static/robots.txt
   upload: static/robots.txt
 
+- url: /adsense.txt
+  static_files: static/adsense.txt
+  upload: static/adsense.txt
+
 - url: /p/(.*\.ttf)
   static_files: static/\1
   upload: static/(.*\.ttf)

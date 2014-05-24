@@ -3,7 +3,7 @@
 # set ads_articlelist_top = getAds('articlelist_top')
 
 # block seo
-## obj means category name or tag name
+## obj means category name or tag instance
 <meta name="keywords" content="{{obj}},{{ config.CONFIG_DB.brand_name }},{{ config.CONFIG_DB.keywords }}" />
 <meta name="description" content="{{obj}},{{ config.CONFIG_DB.description }}" />
 # endblock
@@ -57,7 +57,7 @@
 				</article>
 				# endfor
 				# if not data:
-				nothing here
+				We got nothing found there...
 				# endif
 				<div class="entry-navi">
 					#- if next_page:

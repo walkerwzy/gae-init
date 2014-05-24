@@ -23,6 +23,7 @@ import task
 import user
 
 import blog_controller
+import importer
 
 
 if config.DEVELOPMENT:
@@ -75,7 +76,7 @@ def profile():
   if form.validate_on_submit():
     form.populate_obj(user_db)
     user_db.put()
-    return flask.redirect(flask.url_for('welcome'))
+    return flask.redirect(flask.url_for('index'))
 
   if flask.request.path.startswith('/_s/'):
     return util.jsonify_model_db(user_db)

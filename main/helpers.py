@@ -19,11 +19,8 @@ def utility_processor():
   def getLinks():
     return cms.Links.query().order(cms.Links.sort)
   def getAds(position):
-    ad_dbs = cms.Ads.query(cms.Ads.name==position).fetch(1)
-    if ad_dbs:
-      return ad_dbs[0].value
-    else:
-      return ''
+    ad_db = cms.Ads.query(cms.Ads.name==position).get()
+    return ad_db.value if ad_db else ''
   def renderScript(name):
     for module, scripts in config.SCRIPTS:
       if module == name:
