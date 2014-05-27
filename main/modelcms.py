@@ -169,7 +169,7 @@ class Article(Base):
     @property
     def next(self):
         if self.next_key:
-            art = Article.getbyid(self.next_key.id()) # self.next_key.get()
+            art = self.next_key.get()
             if art:
                 return art
             else:
@@ -188,7 +188,7 @@ class Article(Base):
     @property
     def prev(self):
         if self.prev_key:
-            art = Article.getbyid(self.prev_key.id()) # self.prev_key.get()
+            art = self.prev_key.get()
             if art:
                 return art
             else:
@@ -203,15 +203,6 @@ class Article(Base):
                 return art
             else:
                 return None
-
-    @classmethod
-    def getbyid(cls,id):
-        mem_art_key = '%s_%s'%(memkey.article_key,id)
-        art = memcache.get(mem_art_key)
-        if art is None:
-            art = cls.get_by_id(id)
-            memcache.set(mem_art_key,art,3600)
-        return art
 
 # class EntryCount(BaseModel):
 #     counts=db.IntegerProperty(default=0)

@@ -33,7 +33,7 @@ PAGESIZE = 10
 @app.route('/article/<int:id>/<title>',endpoint='article')
 @app.route('/a/<int:id>',endpoint='plink')
 def get_article_by_id(id,title=''):
-	post = cms.Article.getbyid(id) # customer classmethod which use memcache
+	post = cms.Article.get_by_id(id)
 	if not post:
 		flask.abort(404)
 	post.content = markdown(post.content)
