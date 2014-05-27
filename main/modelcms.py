@@ -62,10 +62,19 @@ class Tag(Base):
 
     @classmethod
     def tagcloud(cls):
+        # todo: from alltags() get all tags, then order
         tags = memcache.get(memkey.tagcloud_key)
         if tags is None:
             tags = cls.query().order(-cls.entrycount).fetch(50)
             memcache.set(memkey.tagcloud_key,tags,3600)
+        return tags
+
+    @classmethod
+    def alltags(cls):
+        tags = memcache.get(memkey.tags_key)
+        if tags is None:
+            tags = cls.query().fetch()  # probably too much
+            memcache.set(memkey.tags_key,tags,3600)
         return tags
 
     _PROPERTIES = Base._PROPERTIES.union({

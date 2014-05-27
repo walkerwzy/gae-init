@@ -494,3 +494,5 @@ def update_tags(new_tags, old_tags=[]):
           tag.put()
   except Exception:
     pass
+  else:
+    memcache.delete(memkey.tags_key)

@@ -80,9 +80,10 @@ def index():
 ###########################################
 @app.route('/category/<category>/',endpoint="cate")
 def category(category):
-	cate_db=cms.Category.query(cms.Category.name == category).get()
-	if cate_db:
-		article_qry=cms.Article.query(cms.Article.category==cate_db.key).order(-cms.Article.created)
+	cate_dbs = [c for c in cms.Category.allcates() if c.name.lower() == category.lower()]
+	if cate_dbs:
+		cate_db = cate_dbs[0]
+		article_qry = cms.Article.query(cms.Article.category==cate_db.key).order(-cms.Article.created)
 		pager = Pager(query=article_qry, page=util.param('page') or 1)
 		article_dbs, _, _ = pager.paginate(page_size=PAGESIZE)
 	else:
@@ -100,13 +101,14 @@ def category(category):
 ###########################################
 @app.route('/tag/<tag>/',endpoint="tag")
 def tag(tag):
-	tag_db=cms.Tag.query(cms.Tag.name == tag).get()
-	if tag_db:
+	tag_dbs = [t for t in cms.Tag.alltags() if t.name.lower() == tag.lower()]
+	if tag_dbs:
+		tag_db = tag_dbs[0]
 		article_qry = cms.Article.query(cms.Article.tags==tag).order(-cms.Article.created)
 		pager = Pager(query=article_qry, page=util.param('page') or 1)
 		article_dbs, _, _ = pager.paginate(page_size=PAGESIZE)
 	else:
-		pager, article_db, obj = None, [], None
+		pager, article_db, tag_db = None, [], None
 	return flask.render_template(
 		theme_file('index.html'),
 		obj=tag_db,
