@@ -15,12 +15,13 @@ def utility_processor():
       return c.name
     return ''
   def getTags():
-    return cms.Tag.query().order(-cms.Tag.entrycount).fetch(50)
+    return cms.Tag.tagcloud()
   def getLinks():
-    return cms.Links.query().order(cms.Links.sort)
+    return cms.Links.alllinks()
   def getAds(position):
-    ad_db = cms.Ads.query(cms.Ads.name==position).get()
-    return ad_db.value if ad_db else ''
+    ad_dbs = cms.Ads.allads()
+    ad_db = [a for a in ad_dbs if a.name == position]
+    return ad_db[0].value if ad_db else ''
   def renderScript(name):
     for module, scripts in config.SCRIPTS:
       if module == name:

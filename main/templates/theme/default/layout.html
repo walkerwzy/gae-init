@@ -2,11 +2,12 @@
 <html class="{% block html_class %}{{html_class}}{% endblock %}">
 <head>
     <meta charset="utf-8">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>{%- block title -%}{{title + ' | ' if title}}{%- endblock %}{{config.CONFIG_DB.brand_name}}</title>
     <link href="{{ url_for('rss') }}" rel="alternate" title="Recent Changes" type="application/atom+xml">
+
+# if config.CONFIG_DB.PRODUCTION:
 	<link rel="stylesheet" href="//www.google.com/cse/style/look/default.css" type="text/css" />
+# endif
     # block seo
     <meta name="keywords" content="{{config.CONFIG_DB.keywords}}" />
     <meta name="description" content="{{config.CONFIG_DB.description}}" />
@@ -62,6 +63,7 @@
     </footer>
 {{renderScript('cmslib')}}
 {{renderScript('cms')}}
+# if config.CONFIG_DB.PRODUCTION:
 <script src="//www.google.com/jsapi" type="text/javascript"></script>
 <script type="text/javascript"> 
   google.load('search', '1', {language : 'en'});
@@ -73,6 +75,7 @@
     customSearchControl.draw('cse', options);
   }, true);
 </script>
+# endif
 # block footjs
 # endblock
 # include 'bit/analytics.html'

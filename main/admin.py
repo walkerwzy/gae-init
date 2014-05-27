@@ -4,6 +4,7 @@ from flask.ext import wtf
 from google.appengine.api import app_identity
 from google.appengine.ext import ndb
 from google.appengine.datastore.datastore_query import Cursor
+from google.appengine.api import memcache
 from markdown import markdown
 import flask
 
@@ -15,6 +16,8 @@ import util
 
 from main import app
 
+import memkey
+
 PAGESIZE = 15
 ADS_POSITION = [
   'sidebar_ads',
@@ -24,6 +27,16 @@ ADS_POSITION = [
   'articlelist_top',
   'articledetail_left_top',
   'articledetail_right_top']
+
+###########################################
+# site configuration
+###########################################
+@app.route('/flushmemcache',endpoint='flush')
+@auth.admin_required
+def flush_memcache():
+  memcache.flush_all()
+  return flask.redirect(flask.url_for('index'))
+
 
 ###########################################
 # site configuration
@@ -110,20 +123,22 @@ def category(cateid=0,act=''):
     k=ndb.Key(cms.Category,cateid)
     k.delete()
     flask.flash('delete category success', category='success')
+    memcache.delete(memkey.cate_key)
     return flask.redirect(flask.url_for('category'))
   query=cms.Category.query()
+  cate_dbs=cms.Category.allcates()
   if flask.request.path.startswith('/_s/'):
     # if cateid:
     #   return util.jsonify_model_db(cms.Category.get_by_id(cateid))
     # else:
-    return util.jsonify_model_dbs(query.fetch())
+    return util.jsonify_model_dbs(cate_dbs)
   btn = 'Create'
   form = CategoryForm()
   if cateid:
     obj=cms.Category.get_by_id(cateid)
     if not obj:
       flask.flash('invalid obj id', category='danger')
-      return flask.render_template('admin/category.html',has_json=True,form=form,data=query,btn=btn)
+      return flask.render_template('admin/category.html',has_json=True,form=form,data=cate_dbs,btn=btn)
     else:
       btn = 'Save'
       form=CategoryForm(obj=obj)
@@ -153,6 +168,7 @@ def category(cateid=0,act=''):
         sort=form.sort.data)
       cate.put()
       flask.flash('category add success',category='success')
+    memcache.delete(memkey.cate_key)
     return flask.redirect(flask.url_for('category'))
   #get
   else:
@@ -181,6 +197,7 @@ def ads(id=0,act=''):
     k=ndb.Key(cms.Ads,id)
     k.delete()
     flask.flash('delete advertisement success', category='success')
+    memcache.delete(memkey.ads_key)
     return flask.redirect(flask.url_for('ads'))
   query=cms.Ads.query()
   if flask.request.path.startswith('/_s/'):
@@ -229,6 +246,7 @@ def ads(id=0,act=''):
         description=form.description.data)
       item.put()
       flask.flash('ads add success',category='success')
+    memcache.delete(memkey.ads_key)
     return flask.redirect(flask.url_for('ads'))
   #get
   else:
@@ -255,6 +273,7 @@ def links(id=0,act=''):
     k=ndb.Key(cms.Links,id)
     k.delete()
     flask.flash('delete link success', category='success')
+    memcache.delete(memkey.links_key)
     return flask.redirect(flask.url_for('links'))
   query=cms.Links.query()
   if flask.request.path.startswith('/_s/'):
@@ -294,6 +313,7 @@ def links(id=0,act=''):
         sort=form.sort.data)
       item.put()
       flask.flash('link add success',category='success')
+    memcache.delete(memkey.links_key)
     return flask.redirect(flask.url_for('links'))
   #get
   else:
@@ -326,22 +346,23 @@ def posts(id=0,act=''):
     update_tags([],article.tags)
     article.key.delete()
     flask.flash('delete post success', category='success')
+    memcache.flush_all()
     return flask.redirect(flask.url_for('posts'))
   # pager
   article_qry=cms.Article.query()
   # return util.jsonify_model_dbs(article_qry)
-  next_curs, prev_curs = None, None
-  curs = Cursor.from_websafe_string(util.param('curs')) if util.param('curs') else None
-  if curs and util.param('prev'):
-    curs = curs.reversed()
-  query, nextcurs, more = article_qry.order(-cms.Article.created).fetch_page(PAGESIZE,start_cursor=curs)
-  if more and nextcurs:
-    next_curs = flask.url_for('posts',curs=nextcurs.urlsafe())
-  if curs:
-    revcurs = curs.reversed()
-    query2, precurs, more = article_qry.order(cms.Article.created).fetch_page(PAGESIZE,start_cursor=revcurs)
-    if precurs:
-      prev_curs = flask.url_for('posts',curs=precurs.urlsafe(),prev=1)
+  # next_curs, prev_curs = None, None
+  # curs = Cursor.from_websafe_string(util.param('curs')) if util.param('curs') else None
+  # if curs and util.param('prev'):
+  #   curs = curs.reversed()
+  # query, nextcurs, more = article_qry.order(-cms.Article.created).fetch_page(PAGESIZE,start_cursor=curs)
+  # if more and nextcurs:
+  #   next_curs = flask.url_for('posts',curs=nextcurs.urlsafe())
+  # if curs:
+  #   revcurs = curs.reversed()
+  #   query2, precurs, more = article_qry.order(cms.Article.created).fetch_page(PAGESIZE,start_cursor=revcurs)
+  #   if precurs:
+  #     prev_curs = flask.url_for('posts',curs=precurs.urlsafe(),prev=1)
 
   btn = 'Create'
   form = ArticleForm()
@@ -353,9 +374,9 @@ def posts(id=0,act=''):
         'admin/posts.html',
         form=form,
         data=query,
-        btn=btn,
-        next_curs=next_curs,
-        prev_curs=prev_curs)
+        btn=btn)
+        # next_curs=next_curs,
+        # prev_curs=prev_curs)
     else:
       btn = 'Save'
       form=ArticleForm(obj=obj)
@@ -377,9 +398,9 @@ def posts(id=0,act=''):
             'admin/posts.html',
             form=form,
             data=query,
-            btn=btn,
-            next_curs=next_curs,
-            prev_curs=prev_curs)
+            btn=btn)
+            # next_curs=next_curs,
+            # prev_curs=prev_curs)
       form.category.data=cate
       form.tags.data=tags
       form.abstract.data=get_abstract(form.abstract.data,form.content.data)
@@ -390,6 +411,8 @@ def posts(id=0,act=''):
       form.populate_obj(obj)
       obj.put()
       flask.flash('update success',category='success')
+      art_mem_key = '%s_%s'%(memkey.article_key,id)
+      memcache.delete(art_mem_key)
     else:
       # create
       # check existence
@@ -410,16 +433,17 @@ def posts(id=0,act=''):
       update_category(cate)
       update_tags(tags)
       flask.flash('post success',category='success')
+      memcache.flush_all()
     return flask.redirect(flask.url_for('posts'))
   #get
   else:
     return flask.render_template(
       'admin/posts.html',
       form=form,
-      data=query,
-      btn=btn,
-      next_curs=next_curs,
-      prev_curs=prev_curs)
+      data=[], #query
+      btn=btn)
+      # next_curs=next_curs,
+      # prev_curs=prev_curs)
 
 def get_abstract(source, bkup):
   if not source:
@@ -439,7 +463,8 @@ def update_category(new_key=None, old_key=None):
     if old_key:
       oc = old_key.get()
       oc.entrycount = oc.entrycount-1 if oc.entrycount>0 else 0
-      oc.put()  
+      oc.put()
+    memcache.delete(memkey.cate_key)
   except Exception:
     pass
 

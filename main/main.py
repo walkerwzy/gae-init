@@ -15,6 +15,13 @@ app.jinja_env.line_comment_prefix = '##'
 app.jinja_env.globals.update(slugify=util.slugify)
 app.jinja_env.globals.update(update_query_argument=util.update_query_argument)
 
+def url_for_other_page(page):
+    args = flask.request.view_args.copy()
+    args['page'] = page
+    return flask.url_for(flask.request.endpoint, **args)
+app.jinja_env.globals['url_for_other_page'] = url_for_other_page
+
+
 import helpers
 
 import admin

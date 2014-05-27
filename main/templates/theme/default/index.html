@@ -27,6 +27,7 @@
 
 # block content_main
 			<div id="homewrap" class="main-left">
+			# if data:
 				# for each in data:
 				<article id="entry{{ each.key.id() }}" class="hentry">
 					<h1><a href="{{each.absolute_url}}" title="{{each.title}}" class="reverse round5">{{each.title}}</a></h1>
@@ -42,7 +43,7 @@
 					</aside>
 					<footer class="entry-foot">
 						<span class="m-author" title="Author"><a title="" href="#">{{each.author.get().name}}</a></span>
-						<span class="m-cates" title="Categories"><a title="View all posts in {{each.category.name}}" href="{{each.category.absolute_url}}">{{each.category.get().name}}</a></span>
+						<span class="m-cates" title="Categories"><a title="View all posts in {{each.category.name}}" href="{{each.category.get().absolute_url}}">{{each.category.get().name}}</a></span>
 						<span class="m-tags" title="Tags">
 						#- if each.tags:
 							#- for tag in each.tags:
@@ -56,16 +57,9 @@
 					</footer>
 				</article>
 				# endfor
-				# if not data:
-				We got nothing found there...
-				# endif
-				<div class="entry-navi">
-					#- if next_page:
-						<span class="fright right"><a href="{{next_page}}" title="next page">Next</a> &#187;</span>
-					#- endif
-					#- if prev_page:
-						<span>&#171; <a href="{{prev_page}}" title="prev page">Prev</a></span>
-					#- endif
-				</div>
+			# else:
+			We got nothing found there...
+			# endif
+				# include 'theme/default/pager.html'
 			</div>
 # endblock

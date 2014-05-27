@@ -1,10 +1,12 @@
 # coding: utf-8
 
 from google.appengine.ext import ndb
+from google.appengine.api import memcache
 
 import config
 import modelx
 import util
+import memkey
 
 from model import Base, User
 from flask import url_for
@@ -26,6 +28,14 @@ class Category(Base):
     @property
     def absolute_url(self):
         return url_for('cate', category=self.name)
+
+    @classmethod
+    def allcates(cls):
+        cate_dbs = memcache.get(memkey.cate_key)
+        if cate_dbs is None:
+            cate_dbs = cls.query().order(cls.sort).fetch()
+            memcache.set(memkey.cate_key,cate_dbs)
+        return cate_dbs
 
     _PROPERTIES = Base._PROPERTIES.union({
             'name',
@@ -50,6 +60,14 @@ class Tag(Base):
     def absolute_url(self):
         return url_for('tag', tag=self.name)
 
+    @classmethod
+    def tagcloud(cls):
+        tags = memcache.get(memkey.tagcloud_key)
+        if tags is None:
+            tags = cls.query().order(-cls.entrycount).fetch(50)
+            memcache.set(memkey.tagcloud_key,tags,3600)
+        return tags
+
     _PROPERTIES = Base._PROPERTIES.union({
             'name',
             'entrycount',
@@ -64,6 +82,14 @@ class Ads(Base):
     def __unicode__(self):
         return self.name
 
+    @classmethod
+    def allads(cls):
+        ads = memcache.get(memkey.ads_key)
+        if ads is None:
+            ads = cls.query().fetch()
+            memcache.set(memkey.ads_key,ads)
+        return ads
+
     _PROPERTIES = Base._PROPERTIES.union({
             'name',
             'value',
@@ -77,6 +103,14 @@ class Links(Base):
     
     def __unicode__(self):
         return self.name
+
+    @classmethod
+    def alllinks(cls):
+        links = memcache.get(memkey.links_key)
+        if links is None:
+            links = cls.query().fetch()
+            memcache.set(memkey.links_key,links)
+        return links
 
     _PROPERTIES = Base._PROPERTIES.union({
             'name',
@@ -135,16 +169,18 @@ class Article(Base):
     @property
     def next(self):
         if self.next_key:
-            art = self.next_key.get()
+            art = Article.getbyid(self.next_key.id()) # self.next_key.get()
             if art:
                 return art
             else:
                 return None
         else:
-            art = Article.query().order(-Article.created).filter(Article.created>self.created).get()
+            self_mem_key = '%s_%s'%(memkey.article_key,self.key.id())
+            art = Article.query().order(-Article.created).filter(Article.created<self.created).get()
             if art:
                 self.next_key = art.key
                 self.put()
+                memcache.delete(self_mem_key)
                 return art
             else:
                 return None
@@ -152,19 +188,30 @@ class Article(Base):
     @property
     def prev(self):
         if self.prev_key:
-            art = self.prev_key.get()
+            art = Article.getbyid(self.prev_key.id()) # self.prev_key.get()
             if art:
                 return art
             else:
                 return None
         else:
-            art = Article.query().order(-Article.created).filter(Article.created<self.created).get()
+            self_mem_key = '%s_%s'%(memkey.article_key,self.key.id())
+            art = Article.query().order(Article.created).filter(Article.created>self.created).get()
             if art:
                 self.prev_key = art.key
                 self.put()
+                memcache.delete(self_mem_key)
                 return art
             else:
-                return None    
+                return None
+
+    @classmethod
+    def getbyid(cls,id):
+        mem_art_key = '%s_%s'%(memkey.article_key,id)
+        art = memcache.get(mem_art_key)
+        if art is None:
+            art = cls.get_by_id(id)
+            memcache.set(mem_art_key,art,3600)
+        return art
 
 # class EntryCount(BaseModel):
 #     counts=db.IntegerProperty(default=0)

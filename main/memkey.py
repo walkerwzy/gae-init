@@ -1,0 +1,6 @@
+rss_key = 'dig-music-rss-cache'
+cate_key = 'dig-music-category-cache'
+tagcloud_key = 'dig-music-tagcolud-cache'
+links_key = 'dig-music-links-cache'
+ads_key = 'dig-music-ads-cache'
+article_key = 'dig-music-single-article-cache'
