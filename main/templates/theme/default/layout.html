@@ -5,7 +5,7 @@
     <title>{%- block title -%}{{title + ' | ' if title}}{%- endblock %}{{config.CONFIG_DB.brand_name}}</title>
     <link href="{{ url_for('rss') }}" rel="alternate" title="Recent Changes" type="application/atom+xml">
 
-# if config.CONFIG_DB.PRODUCTION:
+# if config.PRODUCTION:
 	<link rel="stylesheet" href="//www.google.com/cse/style/look/default.css" type="text/css" />
 # endif
     # block seo
@@ -63,7 +63,7 @@
     </footer>
 {{renderScript('cmslib')}}
 {{renderScript('cms')}}
-# if config.CONFIG_DB.PRODUCTION:
+# if config.PRODUCTION:
 <script src="//www.google.com/jsapi" type="text/javascript"></script>
 <script type="text/javascript"> 
   google.load('search', '1', {language : 'en'});
