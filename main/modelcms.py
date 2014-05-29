@@ -162,13 +162,17 @@ class Article(Base):
         
     @property
     def relateposts(self):
-        art_qry = Article.query(Article.key!=self.key)
-        posts = []
-        for tag in self.tags:
-            tag_db = art_qry.filter(Article.tags==tag).fetch(10)
-            posts+=tag_db
-            if len(posts)==10:
-                break
+        posts = memcache.get(memkey.article_related_key)
+        if posts is None:
+            art_qry = Article.query(Article.key!=self.key)
+            posts = []
+            for tag in self.tags:
+                tag_db = art_qry.filter(Article.tags==tag).fetch(10)
+                posts+=tag_db
+                if len(posts)>=10:
+                    break
+            posts = posts[:10]
+            memcache.set(memkey.article_related_key, posts[:10])
         return posts
         
     @property
