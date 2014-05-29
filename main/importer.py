@@ -24,6 +24,14 @@ from collections import Counter
 # @app.route('/im')
 # @auth.admin_required
 # def im():
+	# # empty rel key
+	# art_qry = cms.Article.query(ndb.OR(cms.Article.next_key!=None,cms.Article.prev_key!=None))
+	# for art in art_qry:
+	# 	art.next_key=None
+	# 	art.prev_key=None
+	# 	art.put()
+	# art_qry = cms.Article.query(ndb.OR(cms.Article.next_key!=None,cms.Article.prev_key!=None))
+	# return response('%d'%len(art_qry.fetch()))
 # 	# import all data
 # 	dir = os.path.dirname(os.path.abspath(__file__))
 # 	arts = []

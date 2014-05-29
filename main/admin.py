@@ -373,7 +373,7 @@ def posts(id=0,act=''):
       return flask.render_template(
         'admin/posts.html',
         form=form,
-        data=query,
+        # data=None,
         btn=btn)
         # next_curs=next_curs,
         # prev_curs=prev_curs)
@@ -397,7 +397,7 @@ def posts(id=0,act=''):
           return flask.render_template(
             'admin/posts.html',
             form=form,
-            data=query,
+            # data=None,
             btn=btn)
             # next_curs=next_curs,
             # prev_curs=prev_curs)
@@ -418,7 +418,10 @@ def posts(id=0,act=''):
       # check existence
       if article_qry.filter(cms.Article.title==name).get():
         flask.flash('title exist',category="danger")
-        return flask.render_template('admin/posts.html',form=form,data=query,btn=btn)
+        return flask.render_template('admin/posts.html',
+          form=form,
+          # data=query,
+          btn=btn)
       # todo: abstract
       item = cms.Article(
         author=auth.current_user_key(),
@@ -432,7 +435,7 @@ def posts(id=0,act=''):
       item.put()
       update_category(cate)
       update_tags(tags)
-      flask.flash('post success',category='success')
+      flask.flash('post success, <a href="%s">view</a>'%flask.url_for('plink',id=item.key.id()),category='success')
       memcache.flush_all()
     return flask.redirect(flask.url_for('posts'))
   #get
@@ -440,7 +443,7 @@ def posts(id=0,act=''):
     return flask.render_template(
       'admin/posts.html',
       form=form,
-      data=[], #query
+      # data=[], #query
       btn=btn)
       # next_curs=next_curs,
       # prev_curs=prev_curs)

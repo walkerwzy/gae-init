@@ -259,7 +259,7 @@ def settag(tagsstr):
         tagsstr = remove_html_markup(tagsstr)
         if tagsstr:
             tagsstr = tagsstr.lower()
-            tagsstr = tagsstr.replace(u"ďź",",")
+            tagsstr = tagsstr.replace(u"，",",")
             tagsstr = tagsstr.replace("/",",")
             tagsstr = tagsstr.replace("%",",")
             tagslist = map((lambda x: x.strip()),tagsstr.split(','))
@@ -271,13 +271,6 @@ def settag(tagsstr):
             return []
     else:
         return []
-
-# def gettagstr(tags):
-#   if isinstance(tags,list):
-#     return ','.join(tags)
-#   return ''
-
-import logging
 
 def retrieve_dbs_pager(
     query, prev=False, order=None, limit=None, cursor=None, keys_only=None, **filters
