@@ -52,20 +52,14 @@ class ConfigUpdateForm(wtf.Form):
   feedback_email = wtf.StringField('Feedback Email', [wtf.validators.optional(), wtf.validators.email()], filters=[util.email_filter])
   flask_secret_key = wtf.StringField('Secret Key', [wtf.validators.optional()], filters=[util.strip_filter])
   notify_on_new_user = wtf.BooleanField('Send an email notification when a user signs up')
-<<<<<<< HEAD
-  twitter_consumer_key = wtf.StringField('Twitter Consumer Key', filters=[util.strip_filter])
-  twitter_consumer_secret = wtf.StringField('Twitter Consumer Secret', filters=[util.strip_filter])
+  twitter_consumer_key = wtf.StringField('Consumer Key', filters=[util.strip_filter])
+  twitter_consumer_secret = wtf.StringField('Consumer Secret', filters=[util.strip_filter])
   description = wtf.TextAreaField('Description',filters=[util.strip_filter])
   sub_name = wtf.StringField('Site subname',filters=[util.strip_filter])
   keywords = wtf.StringField('Keywords',filters=[util.strip_filter])
   head_metas = wtf.TextAreaField('Head metas',filters=[util.strip_filter],default="http://")
   google_cse_cs = wtf.StringField('Google cse cs')
   domain = wtf.StringField('Doman',filters=[util.strip_filter])
-=======
-  twitter_consumer_key = wtf.StringField('Consumer Key', filters=[util.strip_filter])
-  twitter_consumer_secret = wtf.StringField('Consumer Secret', filters=[util.strip_filter])
-
->>>>>>> 646169039972112036a1ee29025393317bdc17e3
 
 @app.route('/_s/admin/config/', endpoint='admin_config_update_service')
 @app.route('/admin/config/', methods=['GET', 'POST'])
