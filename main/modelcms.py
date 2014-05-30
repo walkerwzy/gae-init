@@ -23,7 +23,12 @@ class Category(Base):
     
     @property
     def posts(self):
-        return Article.query(Article.category==self.key).fetch()
+        key = '%s_%s'%(memkey.cate_art_key,self.name)
+        arts = memcache.get(key)
+        if arts is None:
+            arts = Article.query(Article.category==self.key).order(-Article.created).fetch(10)
+            memcache.set(key,arts)
+        return arts
 
     @property
     def absolute_url(self):
@@ -188,12 +193,10 @@ class Article(Base):
             else:
                 return None
         else:
-            self_mem_key = '%s_%s'%(memkey.article_key,self.key.id())
             art = Article.query().order(-Article.created).filter(Article.created<self.created).get()
             if art:
                 self.next_key = art.key
                 self.put()
-                memcache.delete(self_mem_key)
                 return art
             else:
                 return None
@@ -207,12 +210,10 @@ class Article(Base):
             else:
                 return None
         else:
-            self_mem_key = '%s_%s'%(memkey.article_key,self.key.id())
             art = Article.query().order(Article.created).filter(Article.created>self.created).get()
             if art:
                 self.prev_key = art.key
                 self.put()
-                memcache.delete(self_mem_key)
                 return art
             else:
                 return None

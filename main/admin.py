@@ -411,8 +411,6 @@ def posts(id=0,act=''):
       form.populate_obj(obj)
       obj.put()
       flask.flash('update success, <a href="%s">view</a>'%flask.url_for('plink',id=obj.key.id()),category='success')
-      art_mem_key = '%s_%s'%(memkey.article_key,id)
-      memcache.delete(art_mem_key)
     else:
       # create
       # check existence

@@ -107,7 +107,7 @@
 					<div class="entry-cate">
 						<h2>{{cate.name}}</h2>
 						<ul>
-							{%for art in cate.posts[:10]%}
+							{%for art in cate.posts%}
 							<li><a href="{{art.absolute_url}}" title="{{art.title}}">{{art.title}}</a></li>
 							{%endfor%}
 						</ul>    
