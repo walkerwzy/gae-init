@@ -420,7 +420,6 @@ def posts(id=0,act=''):
           form=form,
           # data=query,
           btn=btn)
-      # todo: abstract
       item = cms.Article(
         author=auth.current_user_key(),
         title=name,
