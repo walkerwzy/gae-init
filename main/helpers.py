@@ -2,6 +2,7 @@ from main import app
 import modelcms as cms
 import config
 from markupsafe import Markup
+from markdown import markdown
 
 ###############################################################################
 # jinja2_helpers
@@ -35,13 +36,16 @@ def utility_processor():
           s.append(parse_style_str(style))
         return Markup(''.join(s))
     return ''
+  def md(source):
+    return markdown(source)
 
   return dict(getCateName=getCateName,
   	getTags=getTags,
     getAds=getAds,
     getLinks=getLinks,
   	renderScript=renderScript,
-    renderStyle=renderStyle)
+    renderStyle=renderStyle,
+    markdown=md)
 
 def parse_script_str(module,scripts):
 	v = config.CURRENT_VERSION_ID

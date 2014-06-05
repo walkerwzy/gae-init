@@ -16,7 +16,7 @@ import util
 import logging
 
 from main import app
-from markdown import markdown
+# from markdown import markdown
 
 from urlparse import urljoin
 from werkzeug.contrib.atom import AtomFeed
@@ -36,7 +36,7 @@ def get_article_by_id(id,title=''):
 	post = cms.Article.get_by_id(id)
 	if not post:
 		flask.abort(404)
-	post.content = markdown(post.content)
+	# post.content = markdown(post.content)
 	return flask.render_template(
 		theme_file('post.html'),
 		cates=cate_list(),
